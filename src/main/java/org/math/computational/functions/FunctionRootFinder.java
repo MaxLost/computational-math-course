@@ -3,28 +3,27 @@ package org.math.computational.functions;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.Random;
 
 public class FunctionRootFinder {
 
 	private final Function f;
-	private final double left_bound;
-	private final double right_bound;
+	private final double lowerBound;
+	private final double upperBound;
 	private final double epsilon;
 
-	public FunctionRootFinder(Function f, double left_bound, double right_bound, double epsilon) {
+	public FunctionRootFinder(Function f, double lowerBound, double upperBound, double epsilon) {
 		this.f = f;
-		this.left_bound = left_bound;
-		this.right_bound = right_bound;
+		this.lowerBound = lowerBound;
+		this.upperBound = upperBound;
 		this.epsilon = epsilon;
 	}
 
 	public ArrayList<Double> findRoots(double step_size){
 
-		ArrayList<Segment> segments = getRootIntervals(step_size);
+		ArrayList<Segment> segments = getRootSegments(step_size);
 
 		for (Segment segment : segments) {
-			// Call method for root approximation
+			// Call methods for root approximation
 		}
 
 		return null;
@@ -37,27 +36,27 @@ public class FunctionRootFinder {
 		return findRoots(step_size);
 	}
 
-	public ArrayList<Segment> getRootIntervals(double step_size) {
+	public ArrayList<Segment> getRootSegments(double stepSize) {
 
-		ArrayList<Segment> root_segments = new ArrayList<>();
+		ArrayList<Segment> rootSegments = new ArrayList<>();
 
-		double start = this.left_bound;
-		double end = start + step_size;
-		while (end <= this.right_bound) {
+		double start = this.lowerBound;
+		double end = start + stepSize;
+		while (end <= this.upperBound) {
 
 			double start_value = this.f.evaluate(start);
 			double end_value = this.f.evaluate(end);
 
 			if (start_value * end_value < 0) {
-				root_segments.add(new Segment(start, end));
+				rootSegments.add(new Segment(start, end));
 			}
 
 			start = end;
-			end += step_size;
+			end += stepSize;
 
 		}
 
-		return root_segments;
+		return rootSegments;
 	}
 
 	private double getStepSize() {
@@ -72,9 +71,9 @@ public class FunctionRootFinder {
 				return getStepSize();
 			}
 
-			double step_size = (this.right_bound - this.left_bound) / N;
+			double stepSize = (this.upperBound - this.lowerBound) / N;
 
-			if (step_size > 0.01) {
+			if (stepSize > 0.01) {
 				System.out.println("Warning: intervals may be too big for correct roots search.");
 				System.out.println("Would you like to choose bigger amount of intervals? [yes/no]: ");
 				try {
@@ -82,7 +81,7 @@ public class FunctionRootFinder {
 					if (clearance.equals("yes")) {
 						return getStepSize();
 					} else if (clearance.equals("no")) {
-						return step_size;
+						return stepSize;
 					}
 				} catch (NoSuchElementException e) {
 					System.out.println("Unexpected answer, try again");
@@ -117,13 +116,7 @@ public class FunctionRootFinder {
 		return this.f.evaluate((right_bound - left_bound) / 2);
 	}
 
-	private double getRandomPoint(Segment segment) {
-
-		return segment.getLeftBound() + (new Random().nextDouble()) *
-				(segment.getRightBound() - segment.getLeftBound());
-
-	}
-	public double approximateRootNewtonManual(Segment segment, Function first_derivative, Function second_derivative) {
+	public double approximateRootNewtonManual(Segment segment, Function firstDerivative, Function secondDerivative) {
 
 		return 0;
 

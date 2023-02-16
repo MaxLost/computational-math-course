@@ -1,22 +1,31 @@
 package org.math.computational.functions;
 
+import java.util.Random;
+
 public class Segment {
 
-	private final double left_bound;
-	private final double right_bound;
+	private final double lowerBound;
+	private final double upperBound;
 
 	public Segment(double a, double b){
 
-		left_bound = a;
-		right_bound = b;
+		lowerBound = a;
+		upperBound = b;
 	}
 
 	public double getLeftBound(){
-		return left_bound;
+		return lowerBound;
 	}
 
 	public double getRightBound(){
-		return right_bound;
+		return upperBound;
+	}
+
+	public double getRandomPoint() {
+
+		return this.lowerBound + (new Random().nextDouble()) *
+				(this.upperBound - this.lowerBound);
+
 	}
 
 }
