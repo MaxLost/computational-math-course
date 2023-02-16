@@ -1,4 +1,4 @@
-package org.math.computational.functions;
+package org.math.computational;
 
 import java.util.Random;
 

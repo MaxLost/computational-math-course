@@ -3,6 +3,7 @@ package org.math.computational.functions;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import org.math.computational.Segment;
 
 public class FunctionRootFinder {
 
