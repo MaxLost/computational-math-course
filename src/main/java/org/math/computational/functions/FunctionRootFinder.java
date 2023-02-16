@@ -21,9 +21,9 @@ public class FunctionRootFinder {
 
 	public ArrayList<Double> findRoots(double step_size){
 
-		ArrayList<Interval> intervals = getRootIntervals(step_size);
+		ArrayList<Segment> segments = getRootIntervals(step_size);
 
-		for (Interval interval : intervals) {
+		for (Segment segment : segments) {
 			// Call method for root approximation
 		}
 
@@ -37,9 +37,9 @@ public class FunctionRootFinder {
 		return findRoots(step_size);
 	}
 
-	public ArrayList<Interval> getRootIntervals(double step_size) {
+	public ArrayList<Segment> getRootIntervals(double step_size) {
 
-		ArrayList<Interval> intervals_with_roots = new ArrayList<>();
+		ArrayList<Segment> root_segments = new ArrayList<>();
 
 		double start = this.left_bound;
 		double end = start + step_size;
@@ -49,7 +49,7 @@ public class FunctionRootFinder {
 			double end_value = this.f.evaluate(end);
 
 			if (start_value * end_value < 0) {
-				intervals_with_roots.add(new Interval(start, end));
+				root_segments.add(new Segment(start, end));
 			}
 
 			start = end;
@@ -57,10 +57,10 @@ public class FunctionRootFinder {
 
 		}
 
-		return intervals_with_roots;
+		return root_segments;
 	}
 
-	public double getStepSize() {
+	private double getStepSize() {
 
 		try (Scanner input = new Scanner(System.in)) {
 			System.out.println("Enter number of intervals into which original interval will be divided for " +
@@ -93,10 +93,10 @@ public class FunctionRootFinder {
 		return 1e-4;
 	}
 
-	public double approximateRootBisect(Interval interval) {
+	public double approximateRootBisect(Segment segment) {
 
-		double left_bound = interval.getLeftBound();
-		double right_bound = interval.getRightBound();
+		double left_bound = segment.getLeftBound();
+		double right_bound = segment.getRightBound();
 		double left_value = this.f.evaluate(left_bound);
 
 		while (right_bound - left_bound > this.epsilon) {
@@ -117,13 +117,13 @@ public class FunctionRootFinder {
 		return this.f.evaluate((right_bound - left_bound) / 2);
 	}
 
-	private double getRandomPoint(Interval interval) {
+	private double getRandomPoint(Segment segment) {
 
-		return interval.getLeftBound() + (new Random().nextDouble()) *
-				(interval.getRightBound() - interval.getLeftBound());
+		return segment.getLeftBound() + (new Random().nextDouble()) *
+				(segment.getRightBound() - segment.getLeftBound());
 
 	}
-	public double approximateRootNewtonManual(Interval interval, Function first_derivative, Function second_derivative) {
+	public double approximateRootNewtonManual(Segment segment, Function first_derivative, Function second_derivative) {
 
 		return 0;
 
