@@ -1,6 +1,9 @@
 package org.math.computational.functions;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.Random;
 
 public class FunctionRootFinder {
 
@@ -16,21 +19,114 @@ public class FunctionRootFinder {
 		this.epsilon = epsilon;
 	}
 
-	public static ArrayList<Double> findRoots(){
+	public ArrayList<Double> findRoots(double step_size){
 
+		ArrayList<Interval> intervals = getRootIntervals(step_size);
 
+		for (Interval interval : intervals) {
+			// Call method for root approximation
+		}
 
 		return null;
 	}
 
-	public static ArrayList<Interval> getRootIntervals(int step_size) {
+	public ArrayList<Double> findRoots(){
 
-		return null;
+		double step_size = getStepSize();
+
+		return findRoots(step_size);
 	}
 
-	public static ArrayList<Interval> getRootIntervals() {
+	public ArrayList<Interval> getRootIntervals(double step_size) {
 
-		return null;
+		ArrayList<Interval> intervals_with_roots = new ArrayList<>();
+
+		double start = this.left_bound;
+		double end = start + step_size;
+		while (end <= this.right_bound) {
+
+			double start_value = this.f.evaluate(start);
+			double end_value = this.f.evaluate(end);
+
+			if (start_value * end_value < 0) {
+				intervals_with_roots.add(new Interval(start, end));
+			}
+
+			start = end;
+			end += step_size;
+
+		}
+
+		return intervals_with_roots;
+	}
+
+	public double getStepSize() {
+
+		try (Scanner input = new Scanner(System.in)) {
+			System.out.println("Enter number of intervals into which original interval will be divided for " +
+					"roots search: ");
+			int N = input.nextInt();
+
+			if (N < 2) {
+				System.out.println("There are not enough intervals for correct roots search, try bigger amount");
+				return getStepSize();
+			}
+
+			double step_size = (this.right_bound - this.left_bound) / N;
+
+			if (step_size > 0.01) {
+				System.out.println("Warning: intervals may be too big for correct roots search.");
+				System.out.println("Would you like to choose bigger amount of intervals? [yes/no]: ");
+				try {
+					String clearance = input.next("[a-z]");
+					if (clearance.equals("yes")) {
+						return getStepSize();
+					} else if (clearance.equals("no")) {
+						return step_size;
+					}
+				} catch (NoSuchElementException e) {
+					System.out.println("Unexpected answer, try again");
+					return getStepSize();
+				}
+			}
+		}
+		return 1e-4;
+	}
+
+	public double approximateRootBisect(Interval interval) {
+
+		double left_bound = interval.getLeftBound();
+		double right_bound = interval.getRightBound();
+		double left_value = this.f.evaluate(left_bound);
+
+		while (right_bound - left_bound > this.epsilon) {
+			double center = (right_bound - left_bound) / 2;
+			double center_value = this.f.evaluate(center);
+
+			if (center_value * left_value <= 0) {
+
+				right_bound = center;
+			}
+			else {
+
+				left_bound = center;
+				left_value = center_value;
+			}
+		}
+
+		return this.f.evaluate((right_bound - left_bound) / 2);
+	}
+
+	private double getRandomPoint(Interval interval) {
+
+		return interval.getLeftBound() + (new Random().nextDouble()) *
+				(interval.getRightBound() - interval.getLeftBound());
+
+	}
+	public double approximateRootNewtonManual(Interval interval, Function first_derivative, Function second_derivative) {
+
+		return 0;
+
 	}
 
 }
