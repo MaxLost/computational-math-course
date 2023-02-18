@@ -13,9 +13,20 @@ public class FunctionTest {
 		Function ddf = t -> Math.pow(2, t)*Math.pow(Math.log(2), 2) + 2*Math.cos(t);
 
 		FunctionRootFinder task = new FunctionRootFinder(f, df, ddf, -8, 10, 10e-6);
-		double stepSize = (10.0 + 8.0) / 1000.0; // Let's divide segment into 10000 subsegments
+		double stepSize = (10.0 + 8.0) / 1000.0; // Let's divide segment into 1000 subsegments
 		task.findRootsLogged(stepSize);
-		//System.out.println(task.getRootSegments(stepSize));
+	}
+
+	@Test
+	public void test2A(){
+
+		System.out.println("Non-linear equation solving\nA = -5, B = 3\nf(x) = x-10*sin(x)\nPrecision = 10^-6");
+		Function f = t -> t - 10*Math.sin(t);
+		Function df = t -> 1 - 10*Math.cos(t);
+		Function ddf = t -> 10*Math.sin(t);
+		FunctionRootFinder task = new FunctionRootFinder(f, df, ddf, -5, 3, 10e-6);
+		double stepSize = (3 + 5) / 1000.0;
+		task.findRootsLogged(stepSize);
 	}
 
 	@Test

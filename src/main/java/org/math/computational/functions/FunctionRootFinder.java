@@ -27,8 +27,8 @@ public class FunctionRootFinder {
 	public FunctionRootFinder(Function f, Function df, Function ddf,
 	                          double lowerBound, double upperBound, double epsilon) {
 		this.f = f;
-		this.df = null;
-		this.ddf = null;
+		this.df = df;
+		this.ddf = ddf;
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;
 		this.epsilon = epsilon;
@@ -147,7 +147,6 @@ public class FunctionRootFinder {
 		return 1e-4;
 	}
 
-	// WORKING INCORRECTLY
 	public double approximateRootBisect(Segment segment) {
 
 		double start = segment.getLowerBound();
@@ -155,12 +154,11 @@ public class FunctionRootFinder {
 		double startValue = this.f.evaluate(start);
 		int iterationCounter = 0;
 
-		System.out.println("\tInitial approximation: " + (end - start) / 2);
+		System.out.println("\tInitial approximation: " + (start + (end - start) / 2));
 
 		while (end - start > this.epsilon) {
-			//System.out.println(end - start);
-			//System.out.println(iterationCounter);
-			double center = (end - start) / 2;
+
+			double center = start + (end - start) / 2;
 			double center_value = this.f.evaluate(center);
 
 			if (center_value * startValue <= 0) {
@@ -176,8 +174,8 @@ public class FunctionRootFinder {
 		}
 		System.out.println("\tIteration count: " + iterationCounter);
 		System.out.println("\tLast approximations difference: " + (end - start));
-		System.out.println("\tDifference: " + Math.abs(this.f.evaluate((end - start) / 2)));
-		return (end - start) / 2;
+		System.out.println("\tDifference: " + Math.abs(this.f.evaluate(start + (end - start) / 2)));
+		return start + (end - start) / 2;
 	}
 
 	private boolean isNewtonAlgorithmConverges(double point) {
@@ -188,7 +186,7 @@ public class FunctionRootFinder {
 
 		if (this.df == null) {
 			dfValue = Utils.computeDerivative(point, this.f);
-			ddfValue = Utils.computeDerivative(point, t -> Utils.computeDerivative(point, this.f));
+			ddfValue = Utils.computeDerivative(point, t -> Utils.computeDerivative(t, this.f));
 		}
 		else if (this.ddf == null) {
 			dfValue = this.df.evaluate(point);
@@ -199,10 +197,10 @@ public class FunctionRootFinder {
 			ddfValue = this.ddf.evaluate(point);
 		}
 
-		return (Math.abs(dfValue) > this.epsilon) && (value * ddfValue >= 0);
+		System.out.println(point + " " + value + " " + ddfValue);
+		return (Math.abs(dfValue) > this.epsilon) && (value * ddfValue >= -this.epsilon);
 	}
 
-	// WORKING INCORRECTLY
 	public double approximateRootNewton(Segment segment) {
 
 		double x0 = segment.getRandomPoint();
@@ -227,8 +225,8 @@ public class FunctionRootFinder {
 			}
 			double x = x0 - p * value / dfValue;
 
-			while(Math.abs(x - x0) < this.epsilon && iterationCounter < 30) {
-				//System.out.println(x);
+			while(Math.abs(x - x0) > this.epsilon && iterationCounter < 30) {
+
 				x0 = x;
 				if (this.df == null) {
 					dfValue = Utils.computeDerivative(x, this.f);
