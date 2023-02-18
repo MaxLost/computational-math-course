@@ -13,11 +13,11 @@ public class Segment {
 		upperBound = b;
 	}
 
-	public double getLeftBound(){
+	public double getLowerBound(){
 		return lowerBound;
 	}
 
-	public double getRightBound(){
+	public double getUpperBound(){
 		return upperBound;
 	}
 
@@ -26,6 +26,10 @@ public class Segment {
 		return this.lowerBound + (new Random().nextDouble()) *
 				(this.upperBound - this.lowerBound);
 
+	}
+
+	public String toString(){
+		return "[" + lowerBound + ";" + upperBound + "]";
 	}
 
 }
