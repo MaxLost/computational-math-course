@@ -5,14 +5,16 @@ import org.junit.Test;
 public class FunctionTest {
 
 	@Test
-	public void variant11(){
+	public void test1A(){
 
-		Function f = t -> Math.tan(t)+Math.exp(t);
-		Function df = t -> 1/Math.pow(Math.cos(t), 2) + Math.exp(t);
-		Function ddf = t -> 2*Math.tan(t)/Math.pow(Math.cos(t), 2) + Math.exp(t);
-		double epsilon = 1e-6;
+		System.out.println("Non-linear equation solving\nA = -8, B = 10\nf(x) = 2^x-2*cos(x)\nPrecision = 10^-6");
+		Function f = t -> Math.pow(2, t) + 2*Math.cos(t);
+		Function df = t -> Math.pow(2, t)*Math.log(2) + 2*Math.sin(t);
+		Function ddf = t -> Math.pow(2, t)*Math.pow(Math.log(2), 2) + 2*Math.cos(t);
 
-		FunctionRootFinder task = new FunctionRootFinder(f, df, ddf, -50, 0, epsilon);
+		FunctionRootFinder task = new FunctionRootFinder(f, df, ddf, -8, 10, 10e-6);
+		double stepSize = (10.0 + 8.0) / 10000.0; // Let's divide segment into 10000 subsegments
+		task.findRootsLogged(stepSize);
 	}
 
 	@Test
@@ -22,7 +24,7 @@ public class FunctionTest {
 
 		Function eq = t -> Math.pow(t, 2) + t;
 		System.out.println(eq.evaluate(x));
-		System.out.println(1e-3);
+		System.out.println(10e-6);
 	}
 
 }

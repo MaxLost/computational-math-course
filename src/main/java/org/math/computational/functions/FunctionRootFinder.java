@@ -34,24 +34,46 @@ public class FunctionRootFinder {
 		this.epsilon = epsilon;
 	}
 
-	public ArrayList<Double> findRoots(double step_size){
+	public ArrayList<Double> findRootsLogged(double step_size){
 
 		ArrayList<Segment> segments = getRootSegments(step_size);
+		ArrayList<Double> roots = new ArrayList<>();
 
 		for (Segment segment : segments) {
 			System.out.println("####################");
 			System.out.println(segment);
-			System.out.println("Bisection method: ");
+			System.out.println("Bisection method:\n");
+			System.out.println("\tApproximate x = " + approximateRootBisect(segment));
+			System.out.println("Newton's method:\n");
+			System.out.println("\tApproximate x = " + approximateRootNewton(segment));
+			System.out.println("Newton's Improved method:\n");
+			double root = approximateRootNewtonImproved(segment);
+			roots.add(root);
+			System.out.println("\tApproximate x = " + root);
+			System.out.println("Secant method:\n");
+			System.out.println("\tApproximate x = " + approximateRootSecantMethod(segment));
 		}
 
-		return null;
+		return roots;
 	}
 
-	public ArrayList<Double> findRoots(){
+	public ArrayList<Double> findRootsLogged(){
 
 		double step_size = getStepSize();
 
 		return findRoots(step_size);
+	}
+
+	public ArrayList<Double> findRoots(double step_size){
+
+		ArrayList<Segment> segments = getRootSegments(step_size);
+		ArrayList<Double> roots = new ArrayList<>();
+
+		for (Segment segment : segments) {
+			roots.add(approximateRootNewtonImproved(segment));
+		}
+
+		return roots;
 	}
 
 	public ArrayList<Segment> getRootSegments(double stepSize) {
@@ -132,6 +154,8 @@ public class FunctionRootFinder {
 		double startValue = this.f.evaluate(start);
 		int iterationCounter = 0;
 
+		System.out.println("\tInitial approximation: " + (end - start) / 2);
+
 		while (end - start > this.epsilon) {
 			double center = (end - start) / 2;
 			double center_value = this.f.evaluate(center);
@@ -147,8 +171,10 @@ public class FunctionRootFinder {
 
 			iterationCounter++;
 		}
-		System.out.println("Bisection iteration count: " + iterationCounter);
-		return this.f.evaluate((end - start) / 2);
+		System.out.println("\tIteration count: " + iterationCounter);
+		System.out.println("\tLast approximations difference: " + (end - start));
+		System.out.println("\tDifference: " + Math.abs(this.f.evaluate((end - start) / 2)));
+		return (end - start) / 2;
 	}
 
 	private boolean isNewtonAlgorithmConverges(double point) {
@@ -180,6 +206,8 @@ public class FunctionRootFinder {
 			x0 = segment.getRandomPoint();
 		}
 
+		System.out.println("\tInitial approximation: " + x0);
+
 		int p = 1;
 
 		while (p < 10) {
@@ -208,10 +236,12 @@ public class FunctionRootFinder {
 				iterationCounter++;
 			}
 			if (Math.abs(x - x0) < this.epsilon) {
-				System.out.println("Newton method iteration count: " + iterationCounter);
+				System.out.println("\tIteration count: " + iterationCounter);
+				System.out.println("\tLast approximations difference: " + Math.abs(x - x0));
+				System.out.println("\tDifference: " + Math.abs(this.f.evaluate(x)));
 				return x;
 			}
-			p++;
+			p += 2;
 		}
 
 		return Double.NaN;
@@ -223,6 +253,8 @@ public class FunctionRootFinder {
 		while(!isNewtonAlgorithmConverges(x0)) {
 			x0 = segment.getRandomPoint();
 		}
+
+		System.out.println("\tInitial approximation: " + x0);
 
 		int p = 1;
 
@@ -250,7 +282,9 @@ public class FunctionRootFinder {
 				iterationCounter++;
 			}
 			if (Math.abs(x - x0) < this.epsilon) {
-				System.out.println("Improved Newton method iteration count: " + iterationCounter);
+				System.out.println("\tIteration count: " + iterationCounter);
+				System.out.println("\tLast approximations difference: " + Math.abs(x - x0));
+				System.out.println("\tDifference: " + Math.abs(this.f.evaluate(x)));
 				return x;
 			}
 			p++;
@@ -259,7 +293,7 @@ public class FunctionRootFinder {
 		return Double.NaN;
 	}
 
-	public double approximateSecantMethod(Segment segment) {
+	public double approximateRootSecantMethod(Segment segment) {
 
 		int p = 1;
 
@@ -270,6 +304,8 @@ public class FunctionRootFinder {
 			double x0 = segment.getLowerBound();
 			double x1 = segment.getUpperBound();
 			double x1Value = this.f.evaluate(x1);
+
+			System.out.println("\tInitial approximations: x0 = " + x0 + ", x1 = " + x1);
 
 			double x2 = x1 - p * x1Value * (x1 - x0) / (x1Value - this.f.evaluate(x0));
 
@@ -284,7 +320,9 @@ public class FunctionRootFinder {
 				iterationCounter++;
 			}
 			if (Math.abs(x2 - x1) < this.epsilon) {
-				System.out.println("Secant method iteration count: " + iterationCounter);
+				System.out.println("\tIteration count: " + iterationCounter);
+				System.out.println("\tLast approximations difference: " + Math.abs(x2 - x1));
+				System.out.println("\tDifference: " + Math.abs(this.f.evaluate(x2)));
 				return x2;
 			}
 			p++;
