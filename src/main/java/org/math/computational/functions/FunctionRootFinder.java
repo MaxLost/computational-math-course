@@ -40,17 +40,17 @@ public class FunctionRootFinder {
 		ArrayList<Double> roots = new ArrayList<>();
 
 		for (Segment segment : segments) {
-			System.out.println("####################");
+			System.out.println("\n############################################\n");
 			System.out.println(segment);
-			System.out.println("Bisection method:\n");
+			System.out.println("\nBisection method:");
 			System.out.println("\tApproximate x = " + approximateRootBisect(segment));
-			System.out.println("Newton's method:\n");
+			System.out.println("\nNewton's method:");
 			System.out.println("\tApproximate x = " + approximateRootNewton(segment));
-			System.out.println("Newton's Improved method:\n");
+			System.out.println("\nNewton's Improved method:");
 			double root = approximateRootNewtonImproved(segment);
 			roots.add(root);
 			System.out.println("\tApproximate x = " + root);
-			System.out.println("Secant method:\n");
+			System.out.println("\nSecant method:");
 			System.out.println("\tApproximate x = " + approximateRootSecantMethod(segment));
 		}
 
@@ -147,6 +147,7 @@ public class FunctionRootFinder {
 		return 1e-4;
 	}
 
+	// WORKING INCORRECTLY
 	public double approximateRootBisect(Segment segment) {
 
 		double start = segment.getLowerBound();
@@ -157,6 +158,8 @@ public class FunctionRootFinder {
 		System.out.println("\tInitial approximation: " + (end - start) / 2);
 
 		while (end - start > this.epsilon) {
+			//System.out.println(end - start);
+			//System.out.println(iterationCounter);
 			double center = (end - start) / 2;
 			double center_value = this.f.evaluate(center);
 
@@ -196,9 +199,10 @@ public class FunctionRootFinder {
 			ddfValue = this.ddf.evaluate(point);
 		}
 
-		return Math.abs(dfValue) > this.epsilon && value * ddfValue > 0;
+		return (Math.abs(dfValue) > this.epsilon) && (value * ddfValue >= 0);
 	}
 
+	// WORKING INCORRECTLY
 	public double approximateRootNewton(Segment segment) {
 
 		double x0 = segment.getRandomPoint();
@@ -224,6 +228,7 @@ public class FunctionRootFinder {
 			double x = x0 - p * value / dfValue;
 
 			while(Math.abs(x - x0) < this.epsilon && iterationCounter < 30) {
+				//System.out.println(x);
 				x0 = x;
 				if (this.df == null) {
 					dfValue = Utils.computeDerivative(x, this.f);
