@@ -197,7 +197,6 @@ public class FunctionRootFinder {
 			ddfValue = this.ddf.evaluate(point);
 		}
 
-		System.out.println(point + " " + value + " " + ddfValue);
 		return (Math.abs(dfValue) > this.epsilon) && (value * ddfValue >= -this.epsilon);
 	}
 
