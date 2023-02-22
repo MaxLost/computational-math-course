@@ -30,6 +30,16 @@ public class FunctionTest {
 	}
 
 	@Test
+	public void test2B(){
+
+		System.out.println("Non-linear equation solving\nA = -5, B = 3\nf(x) = x-10*sin(x)\nPrecision = 10^-6");
+		Function f = t -> t - 10*Math.sin(t);
+		FunctionRootFinder task = new FunctionRootFinder(f, -5, 3, 10e-6);
+		double stepSize = (3 + 5) / 1000.0;
+		task.findRootsLogged(stepSize);
+	}
+
+	@Test
 	public void test(){
 
 		double x = 2;

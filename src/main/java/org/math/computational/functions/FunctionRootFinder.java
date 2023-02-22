@@ -24,6 +24,15 @@ public class FunctionRootFinder {
 		this.epsilon = epsilon;
 	}
 
+	public FunctionRootFinder(Function f, Function df, double lowerBound, double upperBound, double epsilon) {
+		this.f = f;
+		this.df = df;
+		this.ddf = null;
+		this.lowerBound = lowerBound;
+		this.upperBound = upperBound;
+		this.epsilon = epsilon;
+	}
+
 	public FunctionRootFinder(Function f, Function df, Function ddf,
 	                          double lowerBound, double upperBound, double epsilon) {
 		this.f = f;
@@ -117,26 +126,28 @@ public class FunctionRootFinder {
 	private double getStepSize() {
 
 		try (Scanner input = new Scanner(System.in)) {
-			System.out.println("Enter number of intervals into which original interval will be divided for " +
+			System.out.println("Enter number of segments into which original interval will be divided for " +
 					"roots search: ");
 			int N = input.nextInt();
 
 			if (N < 2) {
-				System.out.println("There are not enough intervals for correct roots search, try bigger amount");
+				System.out.println("There are not enough segments for correct roots search, try bigger amount");
 				return getStepSize();
 			}
 
 			double stepSize = (this.upperBound - this.lowerBound) / N;
 
 			if (stepSize > 0.01) {
-				System.out.println("Warning: intervals may be too big for correct roots search.");
-				System.out.println("Would you like to choose bigger amount of intervals? [yes/no]: ");
+				System.out.println("Warning: segments may be too big for correct roots search.");
+				System.out.println("Would you like to choose bigger amount of segments? [yes/no]: ");
 				try {
 					String clearance = input.next("[a-z]");
 					if (clearance.equals("yes")) {
 						return getStepSize();
 					} else if (clearance.equals("no")) {
 						return stepSize;
+					} else {
+						throw new NoSuchElementException();
 					}
 				} catch (NoSuchElementException e) {
 					System.out.println("Unexpected answer, try again");
@@ -197,7 +208,6 @@ public class FunctionRootFinder {
 			ddfValue = this.ddf.evaluate(point);
 		}
 
-		System.out.println(point + " " + value + " " + ddfValue);
 		return (Math.abs(dfValue) > this.epsilon) && (value * ddfValue >= -this.epsilon);
 	}
 
@@ -229,9 +239,9 @@ public class FunctionRootFinder {
 
 				x0 = x;
 				if (this.df == null) {
-					dfValue = Utils.computeDerivative(x, this.f);
+					dfValue = Utils.computeDerivative(x0, this.f);
 				} else {
-					dfValue = this.df.evaluate(x);
+					dfValue = this.df.evaluate(x0);
 				}
 				value = this.f.evaluate(x0);
 
