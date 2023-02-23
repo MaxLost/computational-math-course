@@ -70,7 +70,7 @@ public class FunctionRootFinder {
 
 		double step_size = getStepSize();
 
-		return findRoots(step_size);
+		return findRootsLogged(step_size);
 	}
 
 	public ArrayList<Double> findRoots(double step_size){
@@ -141,7 +141,7 @@ public class FunctionRootFinder {
 				System.out.println("Warning: segments may be too big for correct roots search.");
 				System.out.println("Would you like to choose bigger amount of segments? [yes/no]: ");
 				try {
-					String clearance = input.next("[a-z]");
+					String clearance = input.next();
 					if (clearance.equals("yes")) {
 						return getStepSize();
 					} else if (clearance.equals("no")) {
@@ -285,8 +285,6 @@ public class FunctionRootFinder {
 			double value = this.f.evaluate(x0);
 			double x = x0 - p * value / dfValue;
 
-			value = this.f.evaluate(x);
-
 			while(Math.abs(x - x0) > this.epsilon && iterationCounter < 30) {
 				x0 = x;
 				value = this.f.evaluate(x0);
@@ -300,7 +298,7 @@ public class FunctionRootFinder {
 				System.out.println("\tDifference: " + Math.abs(this.f.evaluate(x)));
 				return x;
 			}
-			p++;
+			p += 2;
 		}
 
 		return Double.NaN;
@@ -338,7 +336,7 @@ public class FunctionRootFinder {
 				System.out.println("\tDifference: " + Math.abs(this.f.evaluate(x2)));
 				return x2;
 			}
-			p++;
+			p += 2;
 		}
 
 		return Double.NaN;
