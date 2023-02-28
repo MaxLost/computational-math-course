@@ -85,6 +85,13 @@ public class FunctionRootFinder {
 		return roots;
 	}
 
+	public ArrayList<Double> findRoots(){
+
+		double step_size = getStepSize();
+
+		return findRoots(step_size);
+	}
+
 	public ArrayList<Segment> getRootSegments(double stepSize) {
 
 		ArrayList<Segment> rootSegments = new ArrayList<>();
