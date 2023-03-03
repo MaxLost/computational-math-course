@@ -2,6 +2,13 @@ import org.math.computational.functions.*;
 
 import org.junit.Test;
 
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class FunctionTest {
 
 	@Test
@@ -19,7 +26,11 @@ public class FunctionTest {
 
 		FunctionRootFinder task = new FunctionRootFinder(f, df, ddf, -8, 10, 10e-6);
 		double stepSize = (10.0 + 8.0) / 1000.0; // Let's divide segment into 1000 subsegments
-		task.findRootsLogged(stepSize);
+		ArrayList<Double> result = task.findRootsLogged(stepSize);
+		ArrayList<Double> expected = new ArrayList<>(Arrays.asList(-7.851817, -4.731214, -1.377089, 0.659957));
+		for(int i = 0; i < expected.size(); i++){
+			assertTrue(Math.abs(result.get(i) - expected.get(i)) < 10e-6);
+		}
 	}
 
 	@Test
@@ -36,7 +47,11 @@ public class FunctionTest {
 		Function ddf = t -> 10*Math.sin(t);
 		FunctionRootFinder task = new FunctionRootFinder(f, df, ddf, -5, 3, 10e-6);
 		double stepSize = (3 + 5) / 1000.0;
-		task.findRootsLogged(stepSize);
+		ArrayList<Double> result = task.findRootsLogged(stepSize);
+		ArrayList<Double> expected = new ArrayList<>(Arrays.asList(-2.85234, 0.0, 2.85234));
+		for(int i = 0; i < expected.size(); i++){
+			assertTrue(Math.abs(result.get(i) - expected.get(i)) < 10e-6);
+		}
 	}
 
 	@Test
@@ -51,7 +66,11 @@ public class FunctionTest {
 		Function f = t -> t - 10*Math.sin(t);
 		FunctionRootFinder task = new FunctionRootFinder(f, -5, 3, 10e-6);
 		double stepSize = (3 + 5) / 1000.0;
-		task.findRootsLogged(stepSize);
+		ArrayList<Double> result = task.findRootsLogged(stepSize);
+		ArrayList<Double> expected = new ArrayList<>(Arrays.asList(-2.85234, 0.0, 2.85234));
+		for(int i = 0; i < expected.size(); i++){
+			assertTrue(Math.abs(result.get(i) - expected.get(i)) < 10e-6);
+		}
 	}
 
 	@Test
@@ -66,7 +85,11 @@ public class FunctionTest {
 		Function f = t -> 1.2*Math.pow(t, 4) + 2*Math.pow(t, 3) - 13*Math.pow(t, 2) - 14.2*t - 24.1;
 		FunctionRootFinder task = new FunctionRootFinder(f, -5, 5, 10e-6);
 		double stepSize = (5 + 5) / 1000.0;
-		task.findRootsLogged(stepSize);
+		ArrayList<Double> result = task.findRootsLogged(stepSize);
+		ArrayList<Double> expected = new ArrayList<>(Arrays.asList(-3.96719, 3.28791));
+		for(int i = 0; i < expected.size(); i++){
+			assertTrue(Math.abs(result.get(i) - expected.get(i)) < 10e-6);
+		}
 	}
 
 	@Test
@@ -81,6 +104,7 @@ public class FunctionTest {
 		Function f = t -> Math.pow(t, 2);
 		FunctionRootFinder task = new FunctionRootFinder(f, -3, 3, 10e-8);
 		double stepSize = (3 + 3) / 1000.0;
-		task.findRootsLogged(stepSize);
+		ArrayList<Double> result = task.findRootsLogged(stepSize);
+		assertEquals(0, result.size());
 	}
 }
