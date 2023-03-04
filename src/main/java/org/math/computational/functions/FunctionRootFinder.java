@@ -51,16 +51,16 @@ public class FunctionRootFinder {
 		for (Segment segment : segments) {
 			System.out.println("\n############################################\n");
 			System.out.println(segment);
-			System.out.println("\nBisection method:");
-			System.out.println("\tApproximate x = " + approximateRootBisect(segment));
-			System.out.println("\nNewton's method:");
-			System.out.println("\tApproximate x = " + approximateRootNewton(segment));
-			System.out.println("\nNewton's Improved method:");
+			System.out.println("\nМетод бисекции:");
+			System.out.println("\tПриближённый корень x = " + approximateRootBisect(segment));
+			System.out.println("\nМетод Ньютона:");
+			System.out.println("\tПриближённый корень x = " + approximateRootNewton(segment));
+			System.out.println("\nУлучшенный метод Ньютона:");
 			double root = approximateRootNewtonImproved(segment);
 			roots.add(root);
-			System.out.println("\tApproximate x = " + root);
-			System.out.println("\nSecant method:");
-			System.out.println("\tApproximate x = " + approximateRootSecantMethod(segment));
+			System.out.println("\tПриближённый корень x = " + root);
+			System.out.println("\nМетод секущих:");
+			System.out.println("\tПриближённый корень x = " + approximateRootSecantMethod(segment));
 		}
 
 		return roots;
@@ -172,7 +172,7 @@ public class FunctionRootFinder {
 		double startValue = this.f.evaluate(start);
 		int iterationCounter = 0;
 
-		System.out.println("\tInitial approximation: " + (start + (end - start) / 2));
+		System.out.println("\tНачальное приближение: " + (start + (end - start) / 2));
 
 		while (end - start > this.epsilon) {
 
@@ -190,9 +190,9 @@ public class FunctionRootFinder {
 
 			iterationCounter++;
 		}
-		System.out.println("\tIteration count: " + iterationCounter);
-		System.out.println("\tLast approximations difference: " + (end - start));
-		System.out.println("\tDifference: " + Math.abs(this.f.evaluate(start + (end - start) / 2)));
+		System.out.println("\tКоличество итераций: " + iterationCounter);
+		System.out.println("\tРазница между последними приближениями: " + (end - start));
+		System.out.println("\tАбсолютное значение невязки: " + Math.abs(this.f.evaluate(start + (end - start) / 2)));
 		return start + (end - start) / 2;
 	}
 
@@ -225,7 +225,7 @@ public class FunctionRootFinder {
 			x0 = segment.getRandomPoint();
 		}
 
-		System.out.println("\tInitial approximation: " + x0);
+		System.out.println("\tНачальное приближение: " + x0);
 
 		int p = 1;
 
@@ -256,9 +256,9 @@ public class FunctionRootFinder {
 				iterationCounter++;
 			}
 			if (Math.abs(x - x0) < this.epsilon) {
-				System.out.println("\tIteration count: " + iterationCounter);
-				System.out.println("\tLast approximations difference: " + Math.abs(x - x0));
-				System.out.println("\tDifference: " + Math.abs(this.f.evaluate(x)));
+				System.out.println("\tКоличество итераций: " + iterationCounter);
+				System.out.println("\tРазница между последними приближениями: " + Math.abs(x - x0));
+				System.out.println("\tАбсолютное значение невязки: " + Math.abs(this.f.evaluate(x)));
 				return x;
 			}
 			p += 2;
@@ -274,7 +274,7 @@ public class FunctionRootFinder {
 			x0 = segment.getRandomPoint();
 		}
 
-		System.out.println("\tInitial approximation: " + x0);
+		System.out.println("\tНачальное приближение: " + x0);
 
 		int p = 1;
 
@@ -300,9 +300,9 @@ public class FunctionRootFinder {
 				iterationCounter++;
 			}
 			if (Math.abs(x - x0) < this.epsilon) {
-				System.out.println("\tIteration count: " + iterationCounter);
-				System.out.println("\tLast approximations difference: " + Math.abs(x - x0));
-				System.out.println("\tDifference: " + Math.abs(this.f.evaluate(x)));
+				System.out.println("\tКоличество итераций: " + iterationCounter);
+				System.out.println("\tРазница между последними приближениями: " + Math.abs(x - x0));
+				System.out.println("\tАбсолютное значение невязки: " + Math.abs(this.f.evaluate(x)));
 				return x;
 			}
 			p += 2;
@@ -323,7 +323,7 @@ public class FunctionRootFinder {
 			double x1 = segment.getUpperBound();
 			double x1Value = this.f.evaluate(x1);
 
-			System.out.println("\tInitial approximations: x0 = " + x0 + ", x1 = " + x1);
+			System.out.println("\tНачальные приближения: x0 = " + x0 + ", x1 = " + x1);
 
 			double x2 = x1 - p * x1Value * (x1 - x0) / (x1Value - this.f.evaluate(x0));
 
@@ -338,9 +338,9 @@ public class FunctionRootFinder {
 				iterationCounter++;
 			}
 			if (Math.abs(x2 - x1) < this.epsilon) {
-				System.out.println("\tIteration count: " + iterationCounter);
-				System.out.println("\tLast approximations difference: " + Math.abs(x2 - x1));
-				System.out.println("\tDifference: " + Math.abs(this.f.evaluate(x2)));
+				System.out.println("\tКоличество итераций: " + iterationCounter);
+				System.out.println("\tРазница между последними приближениями: " + Math.abs(x2 - x1));
+				System.out.println("\tАбсолютное значение невязки: " + Math.abs(this.f.evaluate(x2)));
 				return x2;
 			}
 			p += 2;
