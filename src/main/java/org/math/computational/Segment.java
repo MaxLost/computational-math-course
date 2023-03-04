@@ -28,8 +28,28 @@ public class Segment {
 
 	}
 
+	@Override
 	public String toString(){
 		return "[" + lowerBound + ";" + upperBound + "]";
+	}
+
+	@Override
+	public boolean equals(Object o) {
+
+		if (o instanceof Segment){
+
+			if (o == this) {
+				return true;
+			}
+			return Math.abs(this.lowerBound - ((Segment) o).getLowerBound()) < 10e-8 &&
+					Math.abs(this.upperBound - ((Segment) o).getUpperBound()) < 10e-8;
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode(){
+		return (int) (Math.round(Math.ceil(upperBound)) ^ Math.round(Math.floor(lowerBound)));
 	}
 
 }
