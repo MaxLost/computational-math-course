@@ -133,6 +133,42 @@ public class FunctionRootFinder {
 	private double getStepSize() {
 
 		try (Scanner input = new Scanner(System.in)) {
+			System.out.println("Введите количество отрезков на которые будет разделён изначальный отрезок для поиска" +
+					"корней: ");
+			int N = input.nextInt();
+
+			if (N < 2) {
+				System.out.println("Недостаточно отрезков для корректного поиска корней, попробуйте ввести большее" +
+						"число");
+				return getStepSize();
+			}
+
+			double stepSize = (this.upperBound - this.lowerBound) / N;
+
+			if (stepSize > 0.01) {
+				System.out.println("Внимание! Отрезки могут оказаться слишком большими для корректного поиска корней");
+				System.out.println("Хотите делить на большее число отрезков? [yes/no]: ");
+				try {
+					String clearance = input.next();
+					if (clearance.equals("yes")) {
+						return getStepSize();
+					} else if (clearance.equals("no")) {
+						return stepSize;
+					} else {
+						throw new NoSuchElementException();
+					}
+				} catch (NoSuchElementException e) {
+					System.out.println("Неизвестный ответ, попробуйте снова");
+					return getStepSize();
+				}
+			}
+		}
+		return 1e-4;
+	}
+
+	private double getStepSizeEN() {
+
+		try (Scanner input = new Scanner(System.in)) {
 			System.out.println("Enter number of segments into which original interval will be divided for " +
 					"roots search: ");
 			int N = input.nextInt();
