@@ -2,6 +2,7 @@ package tasks;
 
 import org.math.computational.PlanePoint;
 import org.math.computational.functions.AlgebraicInterpolator;
+import org.math.computational.functions.Function;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -23,6 +24,8 @@ public class Task2 {
 */
 
 	public static void main(String[] args) {
+
+		// file for test: src/resources/interpolation_test.txt
 
 		System.out.println("""
                 Задача алгебраического интерполирования
@@ -97,9 +100,15 @@ public class Task2 {
 					}
 				}
 
-				task.interpolateLogged(N, X);
+				List<Double> result = task.interpolateLogged(N, X);
 
-				System.out.println("Хотите ли вы продолжить работу? [yes/no]: ");
+				Function f = t -> Math.sin(t) - Math.pow(t, 2) / 2;
+				System.out.println("\nЗначение абсолютной фактической погрешности для формы Лагранжа: "
+									+ Math.abs(result.get(0) - f.evaluate(X)));
+				System.out.println("Значение абсолютной фактической погрешности для формы Ньютона: "
+									+ Math.abs(result.get(1) - f.evaluate(X)));
+
+				System.out.println("Хотите ли вы продолжить работу и получить значение для другой точки? [yes/no]: ");
 				status = input.next();
 			}
 		}
