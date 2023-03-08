@@ -73,24 +73,23 @@ public class AlgebraicInterpolator {
 
 	private double createInterpolationPolynomialNewton(int N, double x){
 
-		double[][] dividedDifferences = new double [N + 2][N + 1];
+		double[][] dividedDifferences = new double [N][N + 1];
 
 		for (int i = 0; i < N + 1; i++) {
-			dividedDifferences[0][i] = nodes.get(i).getX();
-			dividedDifferences[1][i] = nodes.get(i).getY();
+			dividedDifferences[0][i] = nodes.get(i).getY();
 		}
-		for (int i = 2; i < N + 2; i++) {
-			for (int j = 0; j < N + 2 - i; j++){
+		for (int i = 1; i < N + 1; i++) {
+			for (int j = 0; j < N - i; j++){
 				dividedDifferences[i][j] = (dividedDifferences[i - 1][j + 1] - dividedDifferences[i - 1][j])
-											/ (dividedDifferences[0][j + i - 1] - dividedDifferences[0][j]);
+											/ (nodes.get(j + i).getX() - nodes.get(j).getX());
 			}
 		}
 
 		double quotient = 1;
 		double value = 0;
-		for (int i = 1; i < N + 1; i++){
+		for (int i = 0; i < N; i++){
 			value += dividedDifferences[i][0] * quotient;
-			quotient *= (x - nodes.get(i - 1).getX());
+			quotient *= (x - nodes.get(i).getX());
 		}
 
 		return value;
