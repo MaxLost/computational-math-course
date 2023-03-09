@@ -20,7 +20,7 @@ public class Task1 {
 		Function f = t -> Math.pow(t - 1, 2) - Math.exp(-t);
 		Function df = t -> 2*(t - 1) + Math.exp(-t);
 		Function ddf = t -> 2 - Math.exp(-t);
-		FunctionRootFinder task = new FunctionRootFinder(f, df, ddf, -3, 3, 10e-8);
+		FunctionRootFinder task = new FunctionRootFinder(f, df, ddf, -1, 3, 10e-8);
 		task.findRootsLogged();
 	}
 }

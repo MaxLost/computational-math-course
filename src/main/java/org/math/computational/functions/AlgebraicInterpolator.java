@@ -30,7 +30,7 @@ public class AlgebraicInterpolator {
 							? 0
 							: ((Math.abs(a.getX() - x) > Math.abs(b.getX() - x)) ? 1 : -1));
 
-		System.out.println("Таблица узлов для построения интерполяционного многочлена степени " + N
+		System.out.println("Таблица узлов для построения интерполяционного многочлена степени не выше " + N
 							+ " функции f: \n\tx\t | \tf(x)\t");
 
 		for (int i = 0; i < N + 1; i++){

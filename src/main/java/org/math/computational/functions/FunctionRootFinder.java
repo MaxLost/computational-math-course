@@ -267,7 +267,7 @@ public class FunctionRootFinder {
 
 		while (p < 10) {
 
-			int iterationCounter = 0;
+			int iterationCounter = 1;
 
 			double value = this.f.evaluate(x0);
 			double dfValue;
@@ -316,7 +316,7 @@ public class FunctionRootFinder {
 
 		while (p < 10) {
 
-			int iterationCounter = 0;
+			int iterationCounter = 1;
 			double dfValue;
 
 			if (this.df == null) {

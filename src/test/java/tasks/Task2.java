@@ -1,6 +1,7 @@
 package tasks;
 
 import org.math.computational.PlanePoint;
+import org.math.computational.Segment;
 import org.math.computational.functions.AlgebraicInterpolator;
 import org.math.computational.functions.Function;
 
@@ -10,7 +11,6 @@ import java.util.*;
 
 public class Task2 {
 
-/*
 	public static void generateValues() throws IOException{
 		Function f = t -> Math.sin(t) - Math.pow(t, 2)/2;
 		Segment a = new Segment(0, 1);
@@ -21,7 +21,6 @@ public class Task2 {
 			}
 		}
 	}
-*/
 
 	public static void main(String[] args) {
 
@@ -67,7 +66,7 @@ public class Task2 {
 					} else if (clearance.equals("no")) {
 
 						for (int i = 0; i < M; i++) {
-							System.out.println("Введите" + (i + 1) + "узел и значение в нём:");
+							System.out.println("Введите" + (i + 1) + "узел и значение функции в нём:");
 							nodes.add(new PlanePoint(input.nextDouble(), input.nextDouble()));
 						}
 						break;
