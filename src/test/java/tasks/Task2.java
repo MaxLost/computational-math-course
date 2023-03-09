@@ -11,15 +11,32 @@ import java.util.*;
 
 public class Task2 {
 
-	public static void generateValues() throws IOException{
-		Function f = t -> Math.sin(t) - Math.pow(t, 2)/2;
+	public static List<PlanePoint> generateValues(Function f, double left, double right, int M) {
 		Segment a = new Segment(0, 1);
-		try (FileWriter writer = new FileWriter(Paths.get("src/resources/interpolation_test.txt").toFile())) {
+
+		List<PlanePoint> result = new ArrayList<>();
+
+		double step = (right - left) / M;
+		double start = left;
+		double end = start + step;
+
+		for (int i = 0; i < M; i++) {
+
+			double x = (new Segment(start, end)).getRandomPoint();
+			result.add(new PlanePoint(x, f.evaluate(x)));
+
+			start = end;
+			end += step;
+		}
+
+		return result;
+
+		/*try (FileWriter writer = new FileWriter(Paths.get("src/resources/interpolation_test.txt").toFile())) {
 			for (int i = 0; i < 21; i++) {
 				double x = a.getRandomPoint();
 				writer.write(x + " " + f.evaluate(x) + "\n");
 			}
-		}
+		}*/
 	}
 
 	public static void main(String[] args) {
@@ -35,9 +52,17 @@ public class Task2 {
 		try (Scanner input = new Scanner(System.in).useLocale(Locale.US)){
 
 			int M = input.nextInt();
-			List<PlanePoint> nodes = new ArrayList<>();
 
-			while (true) {
+			Function f = t -> Math.sin(t) - Math.pow(t, 2) / 2;
+
+			System.out.println("Введите A - левую границу промежутка для выбора узлов интерполирования: ");
+			double A = input.nextDouble();
+			System.out.println("Введите B - правую границу промежутка для выбора узлов интерполирования: ");
+			double B = input.nextDouble();
+
+			List<PlanePoint> nodes = generateValues(f, A, B, M);
+
+			/*while (true) {
 
 				System.out.println("Вы хотите задать таблицу из файла? [yes/no]:");
 				try {
@@ -77,7 +102,7 @@ public class Task2 {
 					System.out.println("Неизвестный ответ, попробуйте снова");
 					System.out.println(Arrays.toString(e.getStackTrace()));
 				}
-			}
+			}*/
 
 			System.out.println("Таблица значений в точках для функции f: \n\tx\t | \tf(x)\t");
 			for (PlanePoint p : nodes){
@@ -101,7 +126,6 @@ public class Task2 {
 
 				List<Double> result = task.interpolateLogged(N, X);
 
-				Function f = t -> Math.sin(t) - Math.pow(t, 2) / 2;
 				System.out.println("\nЗначение абсолютной фактической погрешности для формы Лагранжа: "
 									+ Math.abs(result.get(0) - f.evaluate(X)));
 				System.out.println("Значение абсолютной фактической погрешности для формы Ньютона: "

@@ -48,6 +48,11 @@ public class FunctionRootFinder {
 		ArrayList<Segment> segments = getRootSegments(step_size);
 		ArrayList<Double> roots = new ArrayList<>();
 
+		System.out.println("После отделения корней получено " + segments.size() + " отрезков с возможными корнями.");
+		for (int i = 0; i < segments.size(); i++){
+			System.out.println(segments.get(i));
+		}
+
 		for (Segment segment : segments) {
 			System.out.println("\n############################################\n");
 			System.out.println(segment);
@@ -133,12 +138,12 @@ public class FunctionRootFinder {
 	private double getStepSize() {
 
 		try (Scanner input = new Scanner(System.in)) {
-			System.out.println("Введите количество отрезков на которые будет разделён изначальный отрезок для поиска" +
+			System.out.println("Введите количество отрезков на которые будет разделён изначальный отрезок для поиска " +
 					"корней: ");
 			int N = input.nextInt();
 
 			if (N < 2) {
-				System.out.println("Недостаточно отрезков для корректного поиска корней, попробуйте ввести большее" +
+				System.out.println("Недостаточно отрезков для корректного поиска корней, попробуйте ввести большее " +
 						"число");
 				return getStepSize();
 			}
