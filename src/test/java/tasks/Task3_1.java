@@ -24,7 +24,13 @@ public class Task3_1 {
                 Введите число узлов интерполяции:""");
 		try (Scanner input = new Scanner(System.in).useLocale(Locale.US)){
 
-			int M = input.nextInt();
+			int M = -1;
+			while (M < 0) {
+				M = input.nextInt();
+				if (M < 0) {
+					System.out.println("Слишком малое M, попробуйте ввести большее M");
+				}
+			}
 
 			System.out.println("Введите A - левую границу промежутка для выбора узлов интерполирования: ");
 			double A = input.nextDouble();
