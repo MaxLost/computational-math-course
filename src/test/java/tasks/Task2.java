@@ -1,43 +1,14 @@
 package tasks;
 
 import org.math.computational.PlanePoint;
-import org.math.computational.Segment;
 import org.math.computational.functions.AlgebraicInterpolator;
 import org.math.computational.functions.Function;
 
-import java.io.*;
-import java.nio.file.Paths;
 import java.util.*;
 
+import static tasks.Utils.divideSegmentRandom;
+
 public class Task2 {
-
-	public static List<PlanePoint> generateValues(Function f, double left, double right, int M) {
-		Segment a = new Segment(0, 1);
-
-		List<PlanePoint> result = new ArrayList<>();
-
-		double step = (right - left) / M;
-		double start = left;
-		double end = start + step;
-
-		for (int i = 0; i < M; i++) {
-
-			double x = (new Segment(start, end)).getRandomPoint();
-			result.add(new PlanePoint(x, f.evaluate(x)));
-
-			start = end;
-			end += step;
-		}
-
-		return result;
-
-		/*try (FileWriter writer = new FileWriter(Paths.get("src/resources/interpolation_test.txt").toFile())) {
-			for (int i = 0; i < 21; i++) {
-				double x = a.getRandomPoint();
-				writer.write(x + " " + f.evaluate(x) + "\n");
-			}
-		}*/
-	}
 
 	public static void main(String[] args) {
 
@@ -60,7 +31,7 @@ public class Task2 {
 			System.out.println("Введите B - правую границу промежутка для выбора узлов интерполирования: ");
 			double B = input.nextDouble();
 
-			List<PlanePoint> nodes = generateValues(f, A, B, M);
+			List<PlanePoint> nodes = divideSegmentRandom(f, A, B, M);
 
 			/*while (true) {
 
