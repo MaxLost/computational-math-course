@@ -107,4 +107,52 @@ public class FunctionTest {
 		ArrayList<Double> result = task.findRootsLogged(stepSize);
 		assertEquals(0, result.size());
 	}
+
+	@Test
+	public void integrateLRTest() {
+		Function f = t -> 3;
+		Integrator task = new Integrator(f, 0, 1);
+		double value = task.integrate("LR");
+		assertTrue(Math.abs(3 - value) < 10e-8);
+	}
+
+	@Test
+	public void integrateRRTest() {
+		Function f = t -> 3;
+		Integrator task = new Integrator(f, 0, 1);
+		double value = task.integrate("RR");
+		assertTrue(Math.abs(3 - value) < 10e-8);
+	}
+
+	@Test
+	public void integrateCRTest() {
+		Function f = t -> t;
+		Integrator task = new Integrator(f, 0, Math.sqrt(2));
+		double value = task.integrate("CR");
+		assertTrue(Math.abs(1 - value) < 10e-8);
+	}
+
+	@Test
+	public void integrateTRTest() {
+		Function f = t -> t;
+		Integrator task = new Integrator(f, 0, Math.sqrt(2));
+		double value = task.integrate("TR");
+		assertTrue(Math.abs(1 - value) < 10e-8);
+	}
+
+	@Test
+	public void integrateSITest() {
+		Function f = t -> Math.pow(t, 2);
+		Integrator task = new Integrator(f, -1.5, 1.5);
+		double value = task.integrate("SI");
+		assertTrue(Math.abs(2.25 - value) < 10e-8);
+	}
+
+	@Test
+	public void integrate38Test() {
+		Function f = t -> Math.pow(t, 3);
+		Integrator task = new Integrator(f, 0, 1);
+		double value = task.integrate("38");
+		assertTrue(Math.abs(0.25 - value) < 10e-8);
+	}
 }
