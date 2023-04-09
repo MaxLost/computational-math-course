@@ -60,37 +60,46 @@ public class Task3_2 {
 			Function ddf = t -> 2.25*Math.exp(1.5*t);
 
 			System.out.println("\nТаблица с результатами вычислений для функции f:\n");
-			System.out.println("\t x\t   |\t f(x)\t|\t  f'(x)   | Погрешность f'(x) | \tf''(x)\t | Погрешность f''(x)");
+			System.out.println("\t x\t   |\t f(x)\t|\t  f'(x)   | Abs Error f'(x) | Rel Error f'(x) " +
+					"|   f''(x)   | Abs Error f''(x) | Rel Error f''(x)");
 			System.out.printf(
 					Locale.US,
-					"%10.6f | %10.3e | %10.3e  | %17.3e | \t-\t\t | \t-\t\n",
+					"%10.6f | %10.3e | %10.3e  | %15.3e | %15.3f |      -     |  \t\t-\t\t  | \t-\t\n",
 					nodes.get(0).getX(),
 					nodes.get(0).getY(),
 					dfValues.get(0).getY(),
+					Math.abs(dfValues.get(0).getY() - df.evaluate(nodes.get(0).getX())),
 					Math.abs(dfValues.get(0).getY() - df.evaluate(nodes.get(0).getX()))
+							/ Math.abs(df.evaluate(nodes.get(0).getX()))
 			);
 
 			for (int i = 1; i < nodes.size() - 1; i++) {
 
 				System.out.printf(
 						Locale.US,
-						"%10.6f | %10.3e | %10.3e  | %17.3e | %12.3e | %10.3e\n",
+						"%10.6f | %10.3e | %10.3e  | %15.3e | %15.3f | %10.3e | %16.3e | %10.3f\n",
 						nodes.get(i).getX(),
 						nodes.get(i).getY(),
 						dfValues.get(i).getY(),
 						Math.abs(dfValues.get(i).getY() - df.evaluate(nodes.get(i).getX())),
+						Math.abs(dfValues.get(i).getY() - df.evaluate(nodes.get(i).getX()))
+								/ Math.abs(df.evaluate(nodes.get(i).getX())),
 						ddfValues.get(i - 1).getY(),
+						Math.abs(ddfValues.get(i - 1).getY() - ddf.evaluate(nodes.get(i).getX())),
 						Math.abs(ddfValues.get(i - 1).getY() - ddf.evaluate(nodes.get(i).getX()))
+								/ Math.abs(ddf.evaluate(nodes.get(i).getX()))
 				);
 			}
 
 			System.out.printf(
 					Locale.US,
-					"%10.6f | %10.3e | %10.3e  | %17.3e | \t-\t\t | \t-\t\n",
+					"%10.6f | %10.3e | %10.3e  | %15.3e | %15.3f |      -     |  \t\t-\t\t  | \t-\t\n",
 					nodes.get(M - 1).getX(),
 					nodes.get(M - 1).getY(),
 					dfValues.get(M - 1).getY(),
+					Math.abs(dfValues.get(M - 1).getY() - df.evaluate(nodes.get(M - 1).getX())),
 					Math.abs(dfValues.get(M - 1).getY() - df.evaluate(nodes.get(M - 1).getX()))
+							/ Math.abs(df.evaluate(nodes.get(M - 1).getX()))
 			);
 
 			System.out.println("\nХотите ли вы ввести другие параметры? [yes/no]");
