@@ -21,6 +21,8 @@ public class Task4_2 {
 		double ddfMax = ddfMax(f, A, B);
 		double ddddfMax = ddfMax(ddf, A, B);
 
+		System.out.printf(Locale.US, "\nЗначение h: %5.3e", (B - A) / m);
+
 		double value = task.integrate("LR", m);
 		double error = Math.pow(B - A, 2) * dfMax / (2 * m);
 		System.out.printf(Locale.US, """
