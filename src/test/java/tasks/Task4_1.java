@@ -38,7 +38,7 @@ public class Task4_1 {
 
 		value = task.integrate("TR");
 		System.out.printf(Locale.US, """
-						\n\nФормула трапеции:
+						\n\nФормула трапеций:
 						\tЗначение интеграла: %10.3e
 						\tАбсолютная погрешность: %10.3e""",
 				value, Math.abs(value - exactValue));

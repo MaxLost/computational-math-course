@@ -52,7 +52,7 @@ public class Task4_2 {
 		value = task.integrate("TR", m);
 		error = (Math.pow(B - A, 3) * ddfMax) / (12 * Math.pow(m, 2));
 		System.out.printf(Locale.US, """
-						\n\nФормула трапеции:
+						\n\nФормула трапеций:
 						\tЗначение интеграла: %14.8f
 						\tТеоретическая погрешность: %10.3e
 						\tАбсолютная погрешность: %10.3e""",
