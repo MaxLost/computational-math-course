@@ -38,7 +38,7 @@ public class Task4_1 {
 
 		value = task.integrate("TR");
 		System.out.printf(Locale.US, """
-						\n\nФормула трапеции:
+						\n\nФормула трапеций:
 						\tЗначение интеграла: %10.3e
 						\tАбсолютная погрешность: %10.3e""",
 				value, Math.abs(value - exactValue));
@@ -70,9 +70,6 @@ public class Task4_1 {
 		Function x = t -> t;
 		Function X = t -> Math.pow(t, 2) / 2;
 
-		Function x2 = t -> Math.pow(t, 2);
-		Function X2 = t -> Math.pow(t, 3) / 3;
-
 		Function x3 = t -> Math.pow(t, 3);
 		Function X3 = t -> Math.pow(t, 4) / 4;
 
@@ -94,7 +91,6 @@ public class Task4_1 {
 			integrationTest(f, F, A, B);
 			//integrationTest(c, C, A, B);
 			//integrationTest(x, X, A, B);
-			//integrationTest(x2, X2, A, B);
 			//integrationTest(x3, X3, A, B);
 		}
 

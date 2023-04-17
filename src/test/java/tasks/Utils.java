@@ -3,9 +3,12 @@ package tasks;
 import org.math.computational.PlanePoint;
 import org.math.computational.Segment;
 import org.math.computational.functions.Function;
+import org.math.computational.functions.NumericalDifferentiator;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class Utils {
 
@@ -45,6 +48,32 @@ public class Utils {
 		}
 
 		return result;
+	}
+
+	public static double dfMax(Function f, double A, double B) {
+
+		List<PlanePoint> nodes = divideSegmentEqual(f, A, B, 10000);
+		NumericalDifferentiator task = new NumericalDifferentiator(nodes);
+		List<PlanePoint> dfValues = task.computeDerivatives();
+		Optional<PlanePoint> value = dfValues.stream().max(Comparator.comparingDouble(t -> Math.abs(t.getY())));
+		if (value.isPresent()) {
+			return Math.abs(value.get().getY());
+		} else {
+			return 0;
+		}
+	}
+
+	public static double ddfMax(Function f, double A, double B) {
+
+		List<PlanePoint> nodes = divideSegmentEqual(f, A, B, 10000);
+		NumericalDifferentiator task = new NumericalDifferentiator(nodes);
+		List<PlanePoint> ddfValues = task.computeSecondDerivatives();
+		Optional<PlanePoint> value = ddfValues.stream().max(Comparator.comparingDouble(t -> Math.abs(t.getY())));
+		if (value.isPresent()) {
+			return Math.abs(value.get().getY());
+		} else {
+			return 0;
+		}
 	}
 
 }
