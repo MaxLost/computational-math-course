@@ -117,9 +117,9 @@ public class FunctionTest {
 	@Test
 	public void integrateCRCompositeTest() {
 		Function f = t -> t;
-		Integrator task = new Integrator(f, 0, Math.sqrt(2));
-		double value = task.integrate("CR", 100000);
-		assertTrue(Math.abs(1 - value) < 10e-9);
+		Integrator task = new Integrator(f, -1, Math.sqrt(2));
+		double value = task.integrate("CR", 100);
+		assertTrue(Math.abs(0.5 - value) < 10e-9);
 	}
 
 	@Test
@@ -150,7 +150,7 @@ public class FunctionTest {
 	public void integrateSICompositeTest() {
 		Function f = t -> Math.pow(t, 3);
 		Integrator task = new Integrator(f, 0, 1);
-		double value = task.integrate("SI", 100000);
+		double value = task.integrate("SI", 1000);
 		assertTrue(Math.abs(0.25 - value) < 10e-9);
 	}
 
@@ -160,5 +160,22 @@ public class FunctionTest {
 		Integrator task = new Integrator(f, 0, 1);
 		double value = task.integrate("38");
 		assertTrue(Math.abs(0.25 - value) < 10e-9);
+	}
+
+	@Test
+	public void integrateCRComposite() {
+		Function f = t -> 1;
+		Integrator task = new Integrator(f, -1, 3);
+		double value = task.integrate("CR", 10);
+		assertTrue(Math.abs(4 - value) < 10e-9);
+	}
+
+	@Test
+	public void integrateSIComposite() {
+		Function f = t -> 1;
+		Integrator task = new Integrator(f, -1, 3);
+		double value = task.integrate("SI", 10);
+		System.out.println(value);
+		assertTrue(Math.abs(4 - value) < 10e-9);
 	}
 }
