@@ -96,7 +96,7 @@ public class Integrator {
 		return f.evaluate((lowerBound + upperBound) / 2) * (upperBound - lowerBound);
 	}
 
-	public double integrateCenterRectangles(double step) {
+	private double integrateCenterRectangles(double step) {
 
 		double value = 0;
 		double x = lowerBound + step / 2;
@@ -132,7 +132,7 @@ public class Integrator {
 		return (upperBound - lowerBound) * (f.evaluate(lowerBound) + 4*f.evaluate(center) + f.evaluate(upperBound)) / 6;
 	}
 
-	public double integrateSimpson(double step) {
+	private double integrateSimpson(double step) {
 
 		double z = f.evaluate(lowerBound) + f.evaluate(upperBound);
 		double w = 0;
