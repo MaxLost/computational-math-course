@@ -203,6 +203,31 @@ public class DenseMatrix implements Matrix
 		}
 	}
 
+	public double det() {
+		if (this.colCount != this.rowCount) {
+			throw new RuntimeException("Cannot compute determinant for non-square matrix");
+		} else {
+			double[] mainDiagonal = new double[rowCount];
+			for (int i = 0; i < rowCount; i++) {
+				mainDiagonal[i] = this.getElement(i, i);
+			}
+
+			for (int i = 0; i < rowCount; i++) {
+				for (int j = i + 1; j < rowCount; j++) {
+					mainDiagonal[j] = this.getElement(j, j) - (this.getElement(j, i) * this.getElement(i, j))
+										/ this.getElement(i, i);
+				}
+			}
+
+			double det = 1;
+			for (int i = 0; i < rowCount; i++) {
+				det *= mainDiagonal[i];
+			}
+			return det;
+
+		}
+	}
+
 	public Matrix transpose() {
 		if (this.rowCount == 0 | this.colCount == 0) {
 			return this;

@@ -271,6 +271,13 @@ public class MatrixTest
 	}
 
 	@Test
+	public void detDenseTest() {
+		DenseMatrix m = new DenseMatrix("dense_test/m3.txt");
+		double value = m.det();
+		assertTrue(Math.abs(value - 0.3) < 10e-12);
+	}
+
+	@Test
 	public void perfomance(){
 		System.out.println("Starting loading sparse matrices");
 		Matrix m1 = new SparseMatrix("m1.txt");
