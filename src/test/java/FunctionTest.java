@@ -178,4 +178,33 @@ public class FunctionTest {
 		System.out.println(value);
 		assertTrue(Math.abs(4 - value) < 10e-9);
 	}
+
+	@Test
+	public void integrateRungeCR() {
+		Function F = t -> Math.sin(t * t) + Math.pow(t, 4) / 4;
+		Function f = t -> 2 * t * Math.cos(t * t) + Math.pow(t, 3);
+		Function ddf = t -> -12*t * Math.sin(t * t) - 8*Math.pow(t, 3) * Math.cos(t * t) + 6*t;
+		int m = 100;
+		int l = 2;
+		Integrator task = new Integrator(f, -2, 1);
+		double mVal = task.integrate("CR", m);
+		double lmVal = task.integrate("CR", m*l);
+		double runge = (Math.pow(l, 2) * lmVal - mVal) / (Math.pow(l, 2) - 1);
+		System.out.println(runge);
+	}
+
+	@Test
+	public void integrateRungeSI() {
+		Function F = t -> Math.sin(t * t) + Math.pow(t, 4) / 4;
+		Function f = t -> 2 * t * Math.cos(t * t) + Math.pow(t, 3);
+		Function ddf = t -> -12*t * Math.sin(t * t) - 8*Math.pow(t, 3) * Math.cos(t * t) + 6*t;
+		int m = 100;
+		int l = 2;
+		System.out.println(F.evaluate(1) - F.evaluate(-2));
+		Integrator task = new Integrator(f, -2, 1);
+		double mVal = task.integrate("SI", m);
+		double lmVal = task.integrate("SI", m*l);
+		double runge = (Math.pow(l, 4) * lmVal - mVal) / (Math.pow(l, 4) - 1);
+		System.out.println(runge);
+	}
 }

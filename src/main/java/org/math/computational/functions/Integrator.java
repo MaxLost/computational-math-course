@@ -99,11 +99,13 @@ public class Integrator {
 	private double integrateCenterRectangles(double step) {
 
 		double value = 0;
-		double x = lowerBound + step / 2;
+		double x = lowerBound + (step / 2.0);
 
 		while (x < upperBound) {
+			//System.out.println(x);
 			value += f.evaluate(x);
 			x += step;
+			//System.out.println(f.evaluate(x));
 		}
 
 		return step * value;
@@ -137,14 +139,15 @@ public class Integrator {
 		double z = f.evaluate(lowerBound) + f.evaluate(upperBound);
 		double w = 0;
 		double q = 0;
-		double h = step / 2;
+		double h = step / 2.0;
 		double x = lowerBound + h;
 
 		while (x < upperBound) {
 			q += f.evaluate(x);
-			w += (x + h < upperBound) ? f.evaluate(x + h) : 0;
+			w += f.evaluate(x + h);
 			x += step;
 		}
+		w -= f.evaluate(upperBound);
 
 		return (z + (2 * w) + (4 * q)) * step / 6;
 	}

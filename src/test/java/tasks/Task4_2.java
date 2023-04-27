@@ -29,16 +29,18 @@ public class Task4_2 {
 						\n\nФормула левых прямоугольников:
 						\tЗначение интеграла: %14.8f
 						\tТеоретическая погрешность: %10.3e
-						\tАбсолютная погрешность: %10.3e""",
-				value, error, Math.abs(value - exactValue));
+						\tАбсолютная погрешность: %10.3e
+						\tОтносительная погрешность: %5.3f%%""",
+				value, error, Math.abs(value - exactValue), Math.abs(value - exactValue) / Math.abs(value) * 100);
 
 		value = task.integrate("RR", m);
 		System.out.printf(Locale.US, """
 						\n\nФормула правых прямоугольников:
 						\tЗначение интеграла: %14.8f
 						\tТеоретическая погрешность: %10.3e
-						\tАбсолютная погрешность: %10.3e""",
-				value, error, Math.abs(value - exactValue));
+						\tАбсолютная погрешность: %10.3e
+						\tОтносительная погрешность: %5.3f%%""",
+				value, error, Math.abs(value - exactValue), Math.abs(value - exactValue) / Math.abs(value) * 100);
 
 		value = task.integrate("СR", m);
 		error = Math.pow(B - A, 3) * ddfMax / (24 * Math.pow(m, 2));
@@ -46,8 +48,9 @@ public class Task4_2 {
 						\n\nФормула серединных прямоугольников:
 						\tЗначение интеграла: %14.8f
 						\tТеоретическая погрешность: %10.3e
-						\tАбсолютная погрешность: %10.3e""",
-				value, error, Math.abs(value - exactValue));
+						\tАбсолютная погрешность: %10.3e
+						\tОтносительная погрешность: %5.3f%%""",
+				value, error, Math.abs(value - exactValue), Math.abs(value - exactValue) / Math.abs(value) * 100);
 
 		value = task.integrate("TR", m);
 		error = (Math.pow(B - A, 3) * ddfMax) / (12 * Math.pow(m, 2));
@@ -55,8 +58,9 @@ public class Task4_2 {
 						\n\nФормула трапеций:
 						\tЗначение интеграла: %14.8f
 						\tТеоретическая погрешность: %10.3e
-						\tАбсолютная погрешность: %10.3e""",
-				value, error, Math.abs(value - exactValue));
+						\tАбсолютная погрешность: %10.3e
+						\tОтносительная погрешность: %5.3f%%""",
+				value, error, Math.abs(value - exactValue), Math.abs(value - exactValue) / Math.abs(value) * 100);
 
 		value = task.integrate("SI", m);
 		error = (Math.pow(B - A, 5) * ddddfMax) / (2880 * Math.pow(m, 4));
@@ -64,8 +68,9 @@ public class Task4_2 {
 						\n\nФормула Симпсона:
 						\tЗначение интеграла: %14.8f
 						\tТеоретическая погрешность: %10.3e
-						\tАбсолютная погрешность: %10.3e""",
-				value, error, Math.abs(value - exactValue));
+						\tАбсолютная погрешность: %10.3e
+						\tОтносительная погрешность: %5.3f%%""",
+				value, error, Math.abs(value - exactValue), Math.abs(value - exactValue) / Math.abs(value) * 100);
 	}
 
 	public static void main(String[] args) {
