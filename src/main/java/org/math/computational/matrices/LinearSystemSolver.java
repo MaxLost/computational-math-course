@@ -35,7 +35,7 @@ public class LinearSystemSolver {
 
 		double det = A.det();
 
-		if (Math.abs(det) < 10e-16) {
+		if (Math.abs(det) < 10e-50){
 			throw new RuntimeException("Finding unique solution for this system is impossible because det(A) = 0");
 		}
 

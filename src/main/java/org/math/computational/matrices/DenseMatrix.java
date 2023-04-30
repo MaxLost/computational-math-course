@@ -207,29 +207,42 @@ public class DenseMatrix implements Matrix
 		if (this.colCount != this.rowCount) {
 			throw new RuntimeException("Cannot compute determinant for non-square matrix");
 		} else {
-			double[][] m = this.toArray();
-			int changes = 0;
+
+			double[][] A = this.toArray();
+			double[][] U = new double[rowCount][rowCount];
+			double[][] L = new double[rowCount][rowCount];
 
 			for (int i = 0; i < rowCount; i++) {
-				int l = i + 1;
-				while (Math.abs(m[i][i]) < 10e-15 && l < rowCount) {
-					double[] tmp = m[i];
-					m[i] = m[l];
-					m[l] = tmp;
-					changes++;
-				}
-				for (int j = i + 1; j < rowCount; j++) {
-					for (int k = j; k < colCount; k++) {
-						m[j][k] = m[j][k] - (Math.abs(m[i][i]) > 10e-15 ? (m[i][k] * m[j][i]) / m[i][i] : 0);
+				U[i][i] = 1;
+			}
+			double sum = 0;
+
+			for (int i = 0; i < rowCount; i++) {
+				for (int j = i; j < rowCount; j++) {
+					sum = 0;
+					for (int k = 0; k < i; k++) {
+						sum = sum + L[j][k] * U[k][i];
 					}
+					L[j][i] = A[j][i] - sum;
+				}
+
+				for (int j = i; j < rowCount; j++) {
+					sum = 0;
+					for(int k = 0; k < i; k++) {
+						sum = sum + L[i][k] * U[k][j];
+					}
+					U[i][j] = (A[i][j] - sum) / L[i][i];
 				}
 			}
 
-			double det = (changes % 2 != 0 ? -1 : 1);
+			double detU = 1;
+			double detL = 1;
+
 			for (int i = 0; i < rowCount; i++) {
-				det *= m[i][i];
+				detU *= U[i][i];
+				detL *= L[i][i];
 			}
-			return det;
+			return detU * detL;
 		}
 	}
 

@@ -1,5 +1,7 @@
 package org.math.computational;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Segment {
@@ -26,6 +28,20 @@ public class Segment {
 		return this.lowerBound + (new Random().nextDouble()) *
 				(this.upperBound - this.lowerBound);
 
+	}
+
+	public List<Double> getUniformlySpacedPoints(int subsegments) {
+
+		double step = (upperBound - lowerBound) / subsegments;
+		double x = lowerBound;
+		List<Double> result = new ArrayList<>(List.of(x));
+
+		for (int i = 0; i < subsegments; i++){
+			x += step;
+			result.add(x);
+		}
+
+		return result;
 	}
 
 	@Override
