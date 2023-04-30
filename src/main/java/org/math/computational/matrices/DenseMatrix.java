@@ -207,24 +207,29 @@ public class DenseMatrix implements Matrix
 		if (this.colCount != this.rowCount) {
 			throw new RuntimeException("Cannot compute determinant for non-square matrix");
 		} else {
-			double[] mainDiagonal = new double[rowCount];
-			for (int i = 0; i < rowCount; i++) {
-				mainDiagonal[i] = this.getElement(i, i);
-			}
+			double[][] m = this.toArray();
+			int changes = 0;
 
 			for (int i = 0; i < rowCount; i++) {
+				int l = i + 1;
+				while (Math.abs(m[i][i]) < 10e-15 && l < rowCount) {
+					double[] tmp = m[i];
+					m[i] = m[l];
+					m[l] = tmp;
+					changes++;
+				}
 				for (int j = i + 1; j < rowCount; j++) {
-					mainDiagonal[j] = this.getElement(j, j) - (this.getElement(j, i) * this.getElement(i, j))
-										/ this.getElement(i, i);
+					for (int k = j; k < colCount; k++) {
+						m[j][k] = m[j][k] - (Math.abs(m[i][i]) > 10e-15 ? (m[i][k] * m[j][i]) / m[i][i] : 0);
+					}
 				}
 			}
 
-			double det = 1;
+			double det = (changes % 2 != 0 ? -1 : 1);
 			for (int i = 0; i < rowCount; i++) {
-				det *= mainDiagonal[i];
+				det *= m[i][i];
 			}
 			return det;
-
 		}
 	}
 
@@ -244,7 +249,11 @@ public class DenseMatrix implements Matrix
 	}
 
 	public double[][] toArray() {
-		return data;
+		double[][] result = new double[rowCount][colCount];
+		for (int i = 0; i < rowCount; i ++){
+			result[i] = data[i].clone();
+		}
+		return result;
 	}
 
 	@Override public int hashCode() {
