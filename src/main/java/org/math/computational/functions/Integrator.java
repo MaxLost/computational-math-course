@@ -1,5 +1,12 @@
 package org.math.computational.functions;
 
+import org.math.computational.PlanePoint;
+import org.math.computational.matrices.DenseMatrix;
+import org.math.computational.matrices.LinearSystemSolver;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Integrator {
 
 	private final Function f;
@@ -102,10 +109,8 @@ public class Integrator {
 		double x = lowerBound + (step / 2.0);
 
 		while (x < upperBound) {
-			//System.out.println(x);
 			value += f.evaluate(x);
 			x += step;
-			//System.out.println(f.evaluate(x));
 		}
 
 		return step * value;
@@ -157,6 +162,57 @@ public class Integrator {
 		double twoThird = lowerBound + 2 * (upperBound - lowerBound) / 3;
 		return (upperBound - lowerBound) * (f.evaluate(lowerBound) + 3 * f.evaluate(oneThird) + 3 * f.evaluate(twoThird)
 				+ f.evaluate(upperBound)) / 8;
+	}
+
+	private List<PlanePoint> buildInterpolationQuadrature (int N, List<Double> nodes, List<Double> momentums) {
+
+		double[][] m = new double[N][N];
+		double[][] momentum_array = new double[N][1];
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				m[i][j] = Math.pow(nodes.get(j), i);
+			}
+			momentum_array[i][0] = momentums.get(i);
+		}
+
+		DenseMatrix M = new DenseMatrix(N, N, m);
+		DenseMatrix mu = new DenseMatrix(N, 1, momentum_array);
+		LinearSystemSolver linearSolver = new LinearSystemSolver(M, mu);
+		List<Double> A = linearSolver.solve();
+
+		List<PlanePoint> result = new ArrayList<>();
+
+		for (int i = 0; i < N; i++) {
+			result.add(new PlanePoint(nodes.get(i), A.get(i)));
+		}
+
+		return result;
+	}
+
+	public List<PlanePoint> buildInterpolationQuadrature(Function rho, int N, List<Double> nodes) {
+
+		List<Double> momentums = new ArrayList<>();
+
+		for (int i = 0; i < N; i++) {
+			int k = i;
+			Function g = t -> rho.evaluate(t) * Math.pow(t, k);
+			Integrator integrator = new Integrator(g, lowerBound, upperBound);
+			momentums.add(integrator.integrate("CR", 1000));
+		}
+
+		return buildInterpolationQuadrature(N, nodes, momentums);
+	}
+
+	public double integrateInterpolationQuadrature (Function weight, int subsegments, List<Double> nodes) {
+
+		List<PlanePoint> A = buildInterpolationQuadrature(weight, subsegments, nodes);
+		double value = 0;
+		for (int i = 0; i < subsegments; i ++) {
+			value += A.get(i).getY() * f.evaluate(nodes.get(i));
+		}
+
+		return value;
 	}
 
 }
