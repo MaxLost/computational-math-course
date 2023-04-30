@@ -278,6 +278,20 @@ public class MatrixTest
 	}
 
 	@Test
+	public void toArrayDenseTest() {
+		double[][] data = {{1, -1}, {0, 1}};
+		DenseMatrix m = new DenseMatrix(2, 2, data);
+		double[][] result = m.toArray();
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 2; j++) {
+				if (result[i][j] != data[i][j]) {
+					fail("Arrays did not match!");
+				}
+			}
+		}
+	}
+
+	@Test
 	public void perfomance(){
 		System.out.println("Starting loading sparse matrices");
 		Matrix m1 = new SparseMatrix("m1.txt");

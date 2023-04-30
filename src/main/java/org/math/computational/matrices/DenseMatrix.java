@@ -243,6 +243,10 @@ public class DenseMatrix implements Matrix
 		}
 	}
 
+	public double[][] toArray() {
+		return data;
+	}
+
 	@Override public int hashCode() {
 
 		String caller = String.valueOf( (new Throwable().getStackTrace())[1] );
