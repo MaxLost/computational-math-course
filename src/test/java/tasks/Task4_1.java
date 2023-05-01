@@ -61,8 +61,8 @@ public class Task4_1 {
 
 	public static void main(String[] args) {
 
-		Function F = t -> Math.sin(t * t) + Math.exp(-t) + Math.pow(t, 4) / 4;
-		Function f = t -> 2 * t * Math.cos(t * t) - Math.exp(-t) + Math.pow(t, 3);
+		Function F = t -> Math.sin(t * t) + Math.pow(t, 4) / 4;
+		Function f = t -> 2 * t * Math.cos(t * t) + Math.pow(t, 3);
 
 		Function c = t -> 1;
 		Function C = t -> t;
@@ -76,7 +76,7 @@ public class Task4_1 {
 		System.out.println("""
 				Задача приближённого вычисления интеграла с помощью интерполяционных квадратурных формул
 				                
-				f(x) = 2t * cos(t^2) - e^(-t) + t^3
+				f(x) = 2t * cos(t^2) + t^3
 				Найти интеграл от f(x) по [a; b]
 				                
 				Введите A - левую границу промежутка интегрирования:""");

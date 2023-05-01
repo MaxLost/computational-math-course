@@ -1,5 +1,14 @@
 package org.math.computational.functions;
 
+import org.math.computational.PlanePoint;
+import org.math.computational.Polynomial;
+import org.math.computational.matrices.DenseMatrix;
+import org.math.computational.matrices.LinearSystemSolver;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 public class Integrator {
 
 	private final Function f;
@@ -99,7 +108,7 @@ public class Integrator {
 	private double integrateCenterRectangles(double step) {
 
 		double value = 0;
-		double x = lowerBound + (step / 2);
+		double x = lowerBound + (step / 2.0);
 
 		while (x < upperBound) {
 			value += f.evaluate(x);
@@ -137,14 +146,15 @@ public class Integrator {
 		double z = f.evaluate(lowerBound) + f.evaluate(upperBound);
 		double w = 0;
 		double q = 0;
-		double h = step / 2;
+		double h = step / 2.0;
 		double x = lowerBound + h;
 
 		while (x < upperBound) {
-			w += f.evaluate(x - h);
 			q += f.evaluate(x);
+			w += f.evaluate(x + h);
 			x += step;
 		}
+		w -= f.evaluate(upperBound);
 
 		return (z + (2 * w) + (4 * q)) * step / 6;
 	}
@@ -154,6 +164,103 @@ public class Integrator {
 		double twoThird = lowerBound + 2 * (upperBound - lowerBound) / 3;
 		return (upperBound - lowerBound) * (f.evaluate(lowerBound) + 3 * f.evaluate(oneThird) + 3 * f.evaluate(twoThird)
 				+ f.evaluate(upperBound)) / 8;
+	}
+
+	public List<PlanePoint> buildInterpolationQuadrature (int N, List<Double> nodes, List<Double> momentums) {
+
+		double[][] m = new double[N][N];
+		double[][] momentum_array = new double[N][1];
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				m[i][j] = Math.pow(nodes.get(j), i);
+			}
+			momentum_array[i][0] = momentums.get(i);
+		}
+
+		DenseMatrix M = new DenseMatrix(N, N, m);
+		DenseMatrix mu = new DenseMatrix(N, 1, momentum_array);
+		LinearSystemSolver linearSolver = new LinearSystemSolver(M, mu);
+		List<Double> A = linearSolver.solve();
+
+		List<PlanePoint> result = new ArrayList<>();
+
+		for (int i = 0; i < N; i++) {
+			result.add(new PlanePoint(nodes.get(i), A.get(i)));
+		}
+
+		return result;
+	}
+
+	public List<Double> calculateMomentums(Function rho, int N) {
+		List<Double> momentums = new ArrayList<>();
+
+		for (int i = 0; i < N; i++) {
+			int k = i;
+			Function g = t -> rho.evaluate(t) * Math.pow(t, k);
+
+			int m = 100000;
+			int l = 10;
+			Integrator integrator = new Integrator(g, lowerBound, upperBound);
+			double mValue = integrator.integrate("CR", m);
+			double lmValue = integrator.integrate("CR", l*m);
+			double rungeValue = (Math.pow(l, 2) * lmValue - mValue) / (Math.pow(l, 2) - 1);
+			momentums.add(rungeValue);
+		}
+
+		return momentums;
+	}
+
+	public List<PlanePoint> buildInterpolationQuadrature(Function rho, int N, List<Double> nodes) {
+
+		List<Double> momentums = calculateMomentums(rho, N);
+
+		return buildInterpolationQuadrature(N, nodes, momentums);
+	}
+
+	public double integrateInterpolationQuadrature (Function weight, int subsegments, List<Double> nodes) {
+
+		List<PlanePoint> A = buildInterpolationQuadrature(weight, subsegments, nodes);
+		double value = 0;
+		for (int i = 0; i < subsegments; i ++) {
+			value += A.get(i).getY() * f.evaluate(nodes.get(i));
+		}
+
+		return value;
+	}
+
+	public List<PlanePoint> buildPreciseInterpolationQuadrature(int subsegments, List<Double> momentums) {
+
+		double[][] m = new double[subsegments][subsegments];
+		double[][] momentum_array = new double[subsegments][1];
+
+		for (int i = 0; i < subsegments; i++) {
+			for (int j = 0; j < subsegments; j++) {
+				m[i][j] = momentums.get(i + j);
+			}
+			momentum_array[i][0] = -1*momentums.get(subsegments + i);
+		}
+
+		DenseMatrix M = new DenseMatrix(subsegments, subsegments, m);
+		DenseMatrix mu = new DenseMatrix(subsegments, 1, momentum_array);
+		LinearSystemSolver linearSolver = new LinearSystemSolver(M, mu);
+		List<Double> X = linearSolver.solve();
+		List<Double> A = new ArrayList<>(X);
+		A.add(1.0);
+		Polynomial w = new Polynomial(A);
+		FunctionRootFinder task = new FunctionRootFinder(w, lowerBound, upperBound, 10e-8);
+		X = task.findRoots(10e-6);
+
+		System.out.println("\nОртогональный многочлен:\n" + w);
+
+		return buildInterpolationQuadrature(subsegments, X, momentums);
+	}
+
+	public List<PlanePoint> buildPreciseInterpolationQuadrature(Function weight, int subsegments) {
+
+		List<Double> momentums = calculateMomentums(weight, 2*subsegments);
+
+		return buildPreciseInterpolationQuadrature(subsegments, momentums);
 	}
 
 }

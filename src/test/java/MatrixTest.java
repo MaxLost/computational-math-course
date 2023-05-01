@@ -1,5 +1,10 @@
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+
 import org.math.computational.matrices.*;
 import static org.junit.Assert.*;
 
@@ -271,6 +276,46 @@ public class MatrixTest
 	}
 
 	@Test
+	public void detDenseTest() {
+		DenseMatrix m = new DenseMatrix("dense_test/m3.txt");
+		double value = m.det();
+		System.out.println(value);
+		assertTrue(Math.abs(value - 0.3) < 10e-12);
+	}
+
+	@Test
+	public void toArrayDenseTest() {
+		double[][] data = {{1, -1}, {0, 1}};
+		DenseMatrix m = new DenseMatrix(2, 2, data);
+		double[][] result = m.toArray();
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 2; j++) {
+				if (result[i][j] != data[i][j]) {
+					fail("Arrays did not match!");
+				}
+			}
+		}
+	}
+
+	@Test
+	public void linearSystemSolverTest() {
+		double[][] a = {{1.0, 4.0, 0.0}, {0.0, 3.0, -2.0}, {-5.0, 1.0, 1.0}};
+		DenseMatrix A = new DenseMatrix(3, 3, a);
+
+		double[][] b = {{1}, {0}, {-3}};
+		DenseMatrix B = new DenseMatrix(3, 1, b);
+
+		LinearSystemSolver task = new LinearSystemSolver(A, B);
+		List<Double> expected = Arrays.asList(0.6444444444444, 0.08888888888888, 0.1333333333333);
+		List<Double> result = task.solve();
+
+		for (int i = 0; i < 3; i++) {
+			assertTrue(Math.abs(expected.get(i) - result.get(i)) < 10e-10);
+		}
+	}
+
+	/*
+	@Test
 	public void perfomance(){
 		System.out.println("Starting loading sparse matrices");
 		Matrix m1 = new SparseMatrix("m1.txt");
@@ -286,7 +331,7 @@ public class MatrixTest
 		System.out.println("Dmul Sparse Matrix time: " +(System.currentTimeMillis() - start));
 		assertEquals(result1, result2);
 	}
-
+	*/
 	/*
 	@Test
 	public void mulDD() {

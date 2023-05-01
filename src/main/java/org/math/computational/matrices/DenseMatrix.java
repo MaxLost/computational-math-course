@@ -203,6 +203,49 @@ public class DenseMatrix implements Matrix
 		}
 	}
 
+	public double det() {
+		if (this.colCount != this.rowCount) {
+			throw new RuntimeException("Cannot compute determinant for non-square matrix");
+		} else {
+
+			double[][] A = this.toArray();
+			double[][] U = new double[rowCount][rowCount];
+			double[][] L = new double[rowCount][rowCount];
+
+			for (int i = 0; i < rowCount; i++) {
+				U[i][i] = 1;
+			}
+			double sum = 0;
+
+			for (int i = 0; i < rowCount; i++) {
+				for (int j = i; j < rowCount; j++) {
+					sum = 0;
+					for (int k = 0; k < i; k++) {
+						sum = sum + L[j][k] * U[k][i];
+					}
+					L[j][i] = A[j][i] - sum;
+				}
+
+				for (int j = i; j < rowCount; j++) {
+					sum = 0;
+					for(int k = 0; k < i; k++) {
+						sum = sum + L[i][k] * U[k][j];
+					}
+					U[i][j] = (A[i][j] - sum) / L[i][i];
+				}
+			}
+
+			double detU = 1;
+			double detL = 1;
+
+			for (int i = 0; i < rowCount; i++) {
+				detU *= U[i][i];
+				detL *= L[i][i];
+			}
+			return detU * detL;
+		}
+	}
+
 	public Matrix transpose() {
 		if (this.rowCount == 0 | this.colCount == 0) {
 			return this;
@@ -216,6 +259,14 @@ public class DenseMatrix implements Matrix
 			}
 			return new DenseMatrix(this.colCount, this.rowCount, result);
 		}
+	}
+
+	public double[][] toArray() {
+		double[][] result = new double[rowCount][colCount];
+		for (int i = 0; i < rowCount; i ++){
+			result[i] = data[i].clone();
+		}
+		return result;
 	}
 
 	@Override public int hashCode() {

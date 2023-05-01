@@ -21,77 +21,98 @@ public class Task4_3 {
 		double dfMax = dfMax(f, A, B);
 		double ddfMax = ddfMax(f, A, B);
 
-		System.out.printf(Locale.US, "\nЗначение h: %5.3e", (B - A) / m);
+		System.out.printf(Locale.US, "\nЗначение h: %5.3e", (B - A) / (l*m));
 
 		double mValue = task.integrate("LR", m);
 		double lmValue = task.integrate("LR", l*m);
 		double rungeValue = (l * lmValue - mValue) / (l - 1);
 		System.out.printf(Locale.US, """
-						\n\nФормула левых прямоугольников:
+						\n\n\nФормула левых прямоугольников:
+						M = %d, L*M = %d
 						\tЗначение интеграла при M разбиений: %14.8f
 						\tАбсолютная погрешность при M разбиений: %10.3e
-						\tЗначение интеграла при L*M разбиений: %14.8f
+						\tОтносительная погрешность при M разбиений: %5.3f%%
+						\n\tЗначение интеграла при L*M разбиений: %14.8f
 						\tАбсолютная погрешность при L*M разбиений: %10.3e
-						\tУточнённое значение интеграла: %14.8f
-						\tАбсолютная погрешность уточнённого значения: %10.3e""",
-				mValue, Math.abs(mValue - exactValue), lmValue, Math.abs(lmValue - exactValue),
-				rungeValue, Math.abs(rungeValue - exactValue));
+						\tОтносительная погрешность при L*M разбиений: %5.3f%%
+						\n\tУточнённое значение интеграла: %14.8f
+						\tАбсолютная погрешность уточнённого значения: %10.3e
+						\tОтносительная погрешность уточнённого значения: %5.3f%%""",
+				m, l*m, mValue, Math.abs(mValue - exactValue), Math.abs(mValue - exactValue) / Math.abs(mValue) * 100,
+				lmValue, Math.abs(lmValue - exactValue), Math.abs(lmValue - exactValue) / Math.abs(lmValue) * 100,
+				rungeValue, Math.abs(rungeValue - exactValue), Math.abs(rungeValue - exactValue) / Math.abs(rungeValue) * 100);
 
 		mValue = task.integrate("RR", m);
-		lmValue = task.integrate("RR", l*m);
+		lmValue = task.integrate("RR", l * m);
 		rungeValue = (l * lmValue - mValue) / (l - 1);
 		System.out.printf(Locale.US, """
-						\n\nФормула правых прямоугольников:
+						\n\n\nФормула правых прямоугольников:
 						\tЗначение интеграла при M разбиений: %14.8f
 						\tАбсолютная погрешность при M разбиений: %10.3e
-						\tЗначение интеграла при L*M разбиений: %14.8f
+						\tОтносительная погрешность при M разбиений: %5.3f%%
+						\n\tЗначение интеграла при L*M разбиений: %14.8f
 						\tАбсолютная погрешность при L*M разбиений: %10.3e
-						\tУточнённое значение интеграла: %14.8f
-						\tАбсолютная погрешность уточнённого значения: %10.3e""",
-				mValue, Math.abs(mValue - exactValue), lmValue, Math.abs(lmValue - exactValue),
-				rungeValue, Math.abs(rungeValue - exactValue));
+						\tОтносительная погрешность при L*M разбиений: %5.3f%%
+						\n\tУточнённое значение интеграла: %14.8f
+						\tАбсолютная погрешность уточнённого значения: %10.3e
+						\tОтносительная погрешность уточнённого значения: %5.3f%%""",
+				mValue, Math.abs(mValue - exactValue), Math.abs(mValue - exactValue) / Math.abs(mValue) * 100,
+				lmValue, Math.abs(lmValue - exactValue), Math.abs(lmValue - exactValue) / Math.abs(lmValue) * 100,
+				rungeValue, Math.abs(rungeValue - exactValue), Math.abs(rungeValue - exactValue) / Math.abs(rungeValue) * 100);
 
-		mValue = task.integrate("СR", m);
-		lmValue = task.integrate("СR", l*m);
+		mValue = task.integrate("CR", m);
+		lmValue = task.integrate("CR", l*m);
 		rungeValue = (Math.pow(l, 2) * lmValue - mValue) / (Math.pow(l, 2) - 1);
 		System.out.printf(Locale.US, """
-						\n\nФормула средних прямоугольников:
+						\n\n\nФормула серединных прямоугольников:
 						\tЗначение интеграла при M разбиений: %14.8f
 						\tАбсолютная погрешность при M разбиений: %10.3e
-						\tЗначение интеграла при L*M разбиений: %14.8f
+						\tОтносительная погрешность при M разбиений: %5.3f%%
+						\n\tЗначение интеграла при L*M разбиений: %14.8f
 						\tАбсолютная погрешность при L*M разбиений: %10.3e
-						\tУточнённое значение интеграла: %14.8f
-						\tАбсолютная погрешность уточнённого значения: %10.3e""",
-				mValue, Math.abs(mValue - exactValue), lmValue, Math.abs(lmValue - exactValue),
-				rungeValue, Math.abs(rungeValue - exactValue));
+						\tОтносительная погрешность при L*M разбиений: %5.3f%%
+						\n\tУточнённое значение интеграла: %14.8f
+						\tАбсолютная погрешность уточнённого значения: %10.3e
+						\tОтносительная погрешность уточнённого значения: %5.3f%%""",
+				mValue, Math.abs(mValue - exactValue), Math.abs(mValue - exactValue) / Math.abs(mValue) * 100,
+				lmValue, Math.abs(lmValue - exactValue), Math.abs(lmValue - exactValue) / Math.abs(lmValue) * 100,
+				rungeValue, Math.abs(rungeValue - exactValue), Math.abs(rungeValue - exactValue) / Math.abs(rungeValue) * 100);
 
 		mValue = task.integrate("TR", m);
-		lmValue = task.integrate("TR", l*m);
+		lmValue = task.integrate("TR", l * m);
 		rungeValue = (Math.pow(l, 2) * lmValue - mValue) / (Math.pow(l, 2) - 1);
 		System.out.printf(Locale.US, """
-						\n\nФормула трапеций:
+						\n\n\nФормула трапеций:
 						\tЗначение интеграла при M разбиений: %14.8f
 						\tАбсолютная погрешность при M разбиений: %10.3e
-						\tЗначение интеграла при L*M разбиений: %14.8f
+						\tОтносительная погрешность при M разбиений: %5.3f%%
+						\n\tЗначение интеграла при L*M разбиений: %14.8f
 						\tАбсолютная погрешность при L*M разбиений: %10.3e
-						\tУточнённое значение интеграла: %14.8f
-						\tАбсолютная погрешность уточнённого значения: %10.3e""",
-				mValue, Math.abs(mValue - exactValue), lmValue, Math.abs(lmValue - exactValue),
-				rungeValue, Math.abs(rungeValue - exactValue));
+						\tОтносительная погрешность при L*M разбиений: %5.3f%%
+						\n\tУточнённое значение интеграла: %14.8f
+						\tАбсолютная погрешность уточнённого значения: %10.3e
+						\tОтносительная погрешность уточнённого значения: %5.3f%%""",
+				mValue, Math.abs(mValue - exactValue), Math.abs(mValue - exactValue) / Math.abs(mValue) * 100,
+				lmValue, Math.abs(lmValue - exactValue), Math.abs(lmValue - exactValue) / Math.abs(lmValue) * 100,
+				rungeValue, Math.abs(rungeValue - exactValue), Math.abs(rungeValue - exactValue) / Math.abs(rungeValue) * 100);
 
 		mValue = task.integrate("SI", m);
-		lmValue = task.integrate("SI", l*m);
+		lmValue = task.integrate("SI", l * m);
 		rungeValue = (Math.pow(l, 4) * lmValue - mValue) / (Math.pow(l, 4) - 1);
 		System.out.printf(Locale.US, """
-						\n\nФормула Симпсона:
+						\n\n\nФормула Симпсона:
 						\tЗначение интеграла при M разбиений: %14.8f
 						\tАбсолютная погрешность при M разбиений: %10.3e
-						\tЗначение интеграла при L*M разбиений: %14.8f
+						\tОтносительная погрешность при M разбиений: %5.3f%%
+						\n\tЗначение интеграла при L*M разбиений: %14.8f
 						\tАбсолютная погрешность при L*M разбиений: %10.3e
-						\tУточнённое значение интеграла: %14.8f
-						\tАбсолютная погрешность уточнённого значения: %10.3e""",
-				mValue, Math.abs(mValue - exactValue), lmValue, Math.abs(lmValue - exactValue),
-				rungeValue, Math.abs(rungeValue - exactValue));
+						\tОтносительная погрешность при L*M разбиений: %5.3f%%
+						\n\tУточнённое значение интеграла: %14.8f
+						\tАбсолютная погрешность уточнённого значения: %10.3e
+						\tОтносительная погрешность уточнённого значения: %5.3f%%""",
+				mValue, Math.abs(mValue - exactValue), Math.abs(mValue - exactValue) / Math.abs(mValue) * 100,
+				lmValue, Math.abs(lmValue - exactValue), Math.abs(lmValue - exactValue) / Math.abs(lmValue) * 100,
+				rungeValue, Math.abs(rungeValue - exactValue), Math.abs(rungeValue - exactValue) / Math.abs(rungeValue) * 100);
 	}
 
 	public static void main(String[] args) {
@@ -138,11 +159,11 @@ public class Task4_3 {
 
 			int l = 0;
 			while (l < 2) {
-				System.out.println("Введите L >= 2 - множитель количества разбиений для вычисления второго значения" +
-						"интеграла в методе Рунге");
+				System.out.println("Введите L >= 2 - множитель количества разбиений для вычисления уточнённого значения" +
+						"интеграла по методу Рунге-Ромберга");
 				l = input.nextInt();
 				if (l < 2) {
-					System.out.println("M должно быть целым числом больше 1, пропробуйте ещё раз.");
+					System.out.println("M должно быть целым числом больше 1, попробуйте ещё раз.");
 				}
 			}
 

@@ -117,9 +117,9 @@ public class FunctionTest {
 	@Test
 	public void integrateCRCompositeTest() {
 		Function f = t -> t;
-		Integrator task = new Integrator(f, 0, Math.sqrt(2));
-		double value = task.integrate("CR", 100000);
-		assertTrue(Math.abs(1 - value) < 10e-9);
+		Integrator task = new Integrator(f, -1, Math.sqrt(2));
+		double value = task.integrate("CR", 100);
+		assertTrue(Math.abs(0.5 - value) < 10e-9);
 	}
 
 	@Test
@@ -150,7 +150,7 @@ public class FunctionTest {
 	public void integrateSICompositeTest() {
 		Function f = t -> Math.pow(t, 3);
 		Integrator task = new Integrator(f, 0, 1);
-		double value = task.integrate("SI", 100000);
+		double value = task.integrate("SI", 1000);
 		assertTrue(Math.abs(0.25 - value) < 10e-9);
 	}
 
@@ -160,5 +160,52 @@ public class FunctionTest {
 		Integrator task = new Integrator(f, 0, 1);
 		double value = task.integrate("38");
 		assertTrue(Math.abs(0.25 - value) < 10e-9);
+	}
+
+	@Test
+	public void integrateCRComposite() {
+		Function f = t -> 1;
+		Integrator task = new Integrator(f, -1, 3);
+		double value = task.integrate("CR", 10);
+		assertTrue(Math.abs(4 - value) < 10e-9);
+	}
+
+	@Test
+	public void integrateSIComposite() {
+		Function f = t -> 1;
+		Integrator task = new Integrator(f, -1, 3);
+		double value = task.integrate("SI", 10);
+		System.out.println(value);
+		assertTrue(Math.abs(4 - value) < 10e-9);
+	}
+
+	@Test
+	public void integrateRungeCR() {
+		Function F = t -> Math.sin(t * t) + Math.pow(t, 4) / 4;
+		Function f = t -> 2 * t * Math.cos(t * t) + Math.pow(t, 3);
+		Function ddf = t -> -12*t * Math.sin(t * t) - 8*Math.pow(t, 3) * Math.cos(t * t) + 6*t;
+		int m = 100;
+		int l = 2;
+		double exactValue = F.evaluate(1) - F.evaluate(-2);
+		Integrator task = new Integrator(f, -2, 1);
+		double mVal = task.integrate("CR", m);
+		double lmVal = task.integrate("CR", m*l);
+		double runge = (Math.pow(l, 2) * lmVal - mVal) / (Math.pow(l, 2) - 1);
+		assertTrue(Math.abs(runge - exactValue) < 10e-8);
+	}
+
+	@Test
+	public void integrateRungeSI() {
+		Function F = t -> Math.sin(t * t) + Math.pow(t, 4) / 4;
+		Function f = t -> 2 * t * Math.cos(t * t) + Math.pow(t, 3);
+		Function ddf = t -> -12*t * Math.sin(t * t) - 8*Math.pow(t, 3) * Math.cos(t * t) + 6*t;
+		int m = 100;
+		int l = 2;
+		double exactValue = F.evaluate(1) - F.evaluate(-2);
+		Integrator task = new Integrator(f, -2, 1);
+		double mVal = task.integrate("SI", m);
+		double lmVal = task.integrate("SI", m*l);
+		double runge = (Math.pow(l, 4) * lmVal - mVal) / (Math.pow(l, 4) - 1);
+		assertTrue(Math.abs(runge - exactValue) < 10e-8);
 	}
 }
