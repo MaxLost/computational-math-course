@@ -263,7 +263,7 @@ public class Integrator {
 		return buildPreciseInterpolationQuadrature(subsegments, momentums);
 	}
 
-	private List<PlanePoint> buildDefaultGaussQuadrature(int N) {
+	private List<PlanePoint> buildDefaultGaussianQuadrature(int N) {
 
 		Polynomial P0 = new Polynomial(List.of(1.0));
 		Polynomial P1 = new Polynomial(List.of(0.0, 1.0));
@@ -288,10 +288,10 @@ public class Integrator {
 		return result;
 	}
 
-	public List<PlanePoint> buildGaussQuadrature(int N) {
+	public List<PlanePoint> buildGaussianQuadrature(int N) {
 
 		if (Math.abs(upperBound - 1) > 10e-10 || Math.abs(lowerBound + 1) > 10e-10) {
-			List<PlanePoint> xA = buildDefaultGaussQuadrature(N);
+			List<PlanePoint> xA = buildDefaultGaussianQuadrature(N);
 			List<PlanePoint> result = new ArrayList<>();
 			double k = (upperBound - lowerBound) / 2;
 			double center = (lowerBound + upperBound) / 2;
@@ -303,8 +303,32 @@ public class Integrator {
 			return result;
 
 		} else {
-			return buildDefaultGaussQuadrature(N);
+			return buildDefaultGaussianQuadrature(N);
 		}
+	}
+
+	public double integrateCompositeGaussianQuadrature(int N, int M) {
+
+		List<PlanePoint> A = buildDefaultGaussianQuadrature(N);
+
+		System.out.println("\nУзлы и коэффициенты КФ Гаусса\n k |     x_k     |     A_k    ");
+		for (int j = 0; j < N; j++) {
+			System.out.printf(Locale.US, " %d | %11.6f | %11.6f\n", j, A.get(j).getX(), A.get(j).getY());
+		}
+
+		double value = 0;
+		double step = (upperBound - lowerBound) / M;
+		double x = lowerBound;
+		double k = step / 2;
+		for (int i = 0; i < M; i++) {
+			double center = x + k;
+			for (int j = 0; j < N; j++) {
+				value += k * A.get(j).getY() * f.evaluate(k * A.get(j).getX() + center);
+			}
+			x += step;
+		}
+
+		return value;
 	}
 
 	private List<PlanePoint> buildDefaultMohlerQuadrature(int N) {

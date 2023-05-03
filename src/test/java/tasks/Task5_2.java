@@ -59,8 +59,8 @@ public class Task5_2 {
 					Integrator integratorF = new Integrator(f, A, B);
 					Integrator integratorX = new Integrator(p, A, B);
 
-					List<PlanePoint> Af = integratorF.buildGaussQuadrature(i);
-					List<PlanePoint> Ax = integratorX.buildGaussQuadrature(i);
+					List<PlanePoint> Af = integratorF.buildGaussianQuadrature(i);
+					List<PlanePoint> Ax = integratorX.buildGaussianQuadrature(i);
 
 					System.out.println("\nУзлы и коэффициенты КФ Гаусса при N = " + i + "\n k |     x_k     |     A_k    ");
 					for (int j = 0; j < i; j++) {
@@ -76,11 +76,13 @@ public class Task5_2 {
 					}
 
 					System.out.printf(Locale.US,
-							"\nx^%d : %.13f\nАбсолютная погрешность: %.8f\nОтносительная погрешность: %.4f%%\n",
+							"\nЗначение интеграла при f(x) = x^%d: %.13f\nАбсолютная погрешность: %.8f\n" +
+									"Относительная погрешность: %.4f%%\n",
 							2*i - 1, pValue, Math.abs(pValue - exactValueP),
 							Math.abs(pValue - exactValueP) / pValue * 100);
 					System.out.printf(Locale.US,
-							"\nf(x) : %.13f\nАбсолютная погрешность: %.8f\nОтносительная погрешность: %.4f%%\n",
+							"\nЗначение интеграла при f(x) = sin(x)/x: %.13f\nАбсолютная погрешность: %.8f\n" +
+									"Относительная погрешность: %.4f%%\n",
 							fValue, Math.abs(fValue - exactValueF),
 							Math.abs(fValue - exactValueF) / fValue * 100);
 				}
@@ -138,11 +140,13 @@ public class Task5_2 {
 					}
 
 					System.out.printf(Locale.US,
-							"\nx^%d : %.13f\nАбсолютная погрешность: %.8f\nОтносительная погрешность: %.4f%%\n",
+							"\nЗначение интеграла при f(x) = x^%d: %.13f\nАбсолютная погрешность: %.8f\n" +
+									"Относительная погрешность: %.4f%%\n",
 							2*finalN1 - 1, xValue, Math.abs(xValue),
 							Math.abs(xValue) / xValue * 100);
 					System.out.printf(Locale.US,
-							"\nf(x) : %.13f\nАбсолютная погрешность: %.8f\nОтносительная погрешность: %.4f%%\n",
+							"\nЗначение интеграла при f(x) = cos(x): %.13f\nАбсолютная погрешность: %.8f\n" +
+									"Относительная погрешность: %.4f%%\n",
 							hValue, Math.abs(hValue - exactValueH),
 							Math.abs(hValue - exactValueH) / hValue * 100);
 				}
