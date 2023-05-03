@@ -27,14 +27,7 @@ public class Task5_2 {
 
 		try (Scanner input = new Scanner(System.in).useLocale(Locale.US)) {
 
-			int N = -1;
-			while (N < 1) {
-				System.out.println("Введите N - число узлов для построения формулы Гаусса: ");
-				N = input.nextInt();
-				if (N < 1) {
-					System.out.println("Слишком малое N, попробуйте ввести большее N");
-				}
-			}
+			System.out.println("\n\nКФ Гаусса\n\n");
 
 			Function f = t -> Math.sin(t) / t;
 			double exactValueF = 1.605412976802694; // Exact value of integral of f(x) from 0 to 2
@@ -42,6 +35,16 @@ public class Task5_2 {
 			String repeat = "yes";
 
 			while (!repeat.equals("no")) {
+
+				int N = -1;
+				while (N < 1) {
+					System.out.println("Введите N - число узлов для построения формулы Гаусса: ");
+					N = input.nextInt();
+					if (N < 1) {
+						System.out.println("Слишком малое N, попробуйте ввести большее N");
+					}
+				}
+
 				System.out.println("Введите A - левую границу промежутка");
 				double A = input.nextDouble();
 				System.out.println("Введите B - правую границу промежутка");
@@ -86,6 +89,8 @@ public class Task5_2 {
 				System.out.println("Хотите ли вы выбрать другие границы интегрирования [yes/no]?");
 				repeat = input.nextLine();
 			}
+
+			System.out.println("\n\nКФ Мёлера\n\n");
 
 			int[] N1 = {-1, -1, -1};
 			for (int i = 0; i < 3; i++) {
