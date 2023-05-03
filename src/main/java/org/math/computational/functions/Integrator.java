@@ -307,4 +307,37 @@ public class Integrator {
 		}
 	}
 
+	private List<PlanePoint> buildDefaultMohlerQuadrature(int N) {
+
+		List<Double> nodes = new ArrayList<>();
+		for (int i = 1; i <= N; i++) {
+			nodes.add(Math.cos((2*i - 1) * Math.PI / (2 * N)));
+		}
+
+		List<PlanePoint> result = new ArrayList<>();
+		for (int i = 0; i < N; i++) {
+			result.add(new PlanePoint(nodes.get(i), Math.PI / N));
+		}
+		return result;
+	}
+
+	public List<PlanePoint> buildMohlerQuadrature(int N) {
+
+		if (Math.abs(upperBound - 1) > 10e-10 || Math.abs(lowerBound + 1) > 10e-10) {
+			List<PlanePoint> xA = buildDefaultMohlerQuadrature(N);
+			List<PlanePoint> result = new ArrayList<>();
+			double k = (upperBound - lowerBound) / 2;
+			double center = (lowerBound + upperBound) / 2;
+
+			for (int i = 0; i < N; i++) {
+				result.add(new PlanePoint(k * xA.get(i).getX() + center, k * Math.PI / N));
+			}
+
+			return result;
+
+		} else {
+			return buildDefaultMohlerQuadrature(N);
+		}
+	}
+
 }

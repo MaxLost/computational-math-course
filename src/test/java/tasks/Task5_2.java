@@ -29,7 +29,7 @@ public class Task5_2 {
 
 			int N = -1;
 			while (N < 1) {
-				System.out.println("Введите N - число узлов для построения формул Гаусса и Мёлера: ");
+				System.out.println("Введите N - число узлов для построения формулы Гаусса: ");
 				N = input.nextInt();
 				if (N < 1) {
 					System.out.println("Слишком малое N, попробуйте ввести большее N");
@@ -85,6 +85,67 @@ public class Task5_2 {
 				input.nextLine();
 				System.out.println("Хотите ли вы выбрать другие границы интегрирования [yes/no]?");
 				repeat = input.nextLine();
+			}
+
+			int[] N1 = {-1, -1, -1};
+			for (int i = 0; i < 3; i++) {
+				while (N1[i] < 2) {
+					System.out.println("Введите N" + (i + 1) + " - число узлов для построения формулы Мёлера: ");
+					N1[i] = input.nextInt();
+					if (N1[i] < 1) {
+						System.out.println("Слишком малое N, попробуйте ввести большее N");
+					}
+				}
+			}
+
+			Function g = t -> Math.cos(t);
+			Function h = t -> g.evaluate(t) / Math.sqrt(1 - Math.pow(t, 2));
+			double exactValueH = 2.403939430634; // Exact value of integral of g(x) / sqrt(1-x^2) from -1 to 1
+			repeat = "yes";
+			while(!repeat.equals("no")) {
+
+				System.out.println("Введите A - левую границу промежутка");
+				double A = input.nextDouble();
+				System.out.println("Введите B - правую границу промежутка");
+				double B = input.nextDouble();
+
+				for (int i = 0; i < 3; i++) {
+					int finalN1 = N1[i];
+					Function x = t -> Math.pow(t, 2 * finalN1 - 1) / Math.sqrt(1 - Math.pow(t, 2));
+
+					Integrator integratorH = new Integrator(h, A, B);
+					Integrator integratorX = new Integrator(x, A, B);
+
+					List<PlanePoint> Cg = integratorH.buildMohlerQuadrature(finalN1);
+					List<PlanePoint> Cx = integratorX.buildMohlerQuadrature(finalN1);
+
+					System.out.println("\nУзлы и коэффициенты КФ Мёлера при N = " + finalN1 + "\n k |     x_k     |     A_k    ");
+					for (int j = 0; j < finalN1; j++) {
+						System.out.printf(Locale.US, " %d | %11.6f | %11.6f\n", j, Cg.get(j).getX(), Cg.get(j).getY());
+					}
+
+					double xValue = 0;
+					double hValue = 0;
+
+					for (int j = 0; j < finalN1; j++) {
+						xValue += Cx.get(j).getY() * x.evaluate(Cx.get(j).getX());
+						hValue += Cg.get(j).getY() * g.evaluate(Cg.get(j).getX());
+					}
+
+					System.out.printf(Locale.US,
+							"\nx^%d : %.13f\nАбсолютная погрешность: %.8f\nОтносительная погрешность: %.4f%%\n",
+							2*finalN1 - 1, xValue, Math.abs(xValue),
+							Math.abs(xValue) / xValue * 100);
+					System.out.printf(Locale.US,
+							"\nf(x) : %.13f\nАбсолютная погрешность: %.8f\nОтносительная погрешность: %.4f%%\n",
+							hValue, Math.abs(hValue - exactValueH),
+							Math.abs(hValue - exactValueH) / hValue * 100);
+				}
+
+				input.nextLine();
+				System.out.println("Хотите ли вы выбрать другие границы интегрирования [yes/no]?");
+				repeat = input.nextLine();
+
 			}
 		}
 	}
