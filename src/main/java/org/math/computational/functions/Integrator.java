@@ -249,7 +249,7 @@ public class Integrator {
 		A.add(1.0);
 		Polynomial w = new Polynomial(A);
 		FunctionRootFinder task = new FunctionRootFinder(w, lowerBound, upperBound, 10e-12);
-		X = task.findRoots(10e-6);
+		X = task.findRoots(10e-8);
 
 		System.out.println("\nОртогональный многочлен:\n" + w);
 
@@ -263,7 +263,7 @@ public class Integrator {
 		return buildPreciseInterpolationQuadrature(subsegments, momentums);
 	}
 
-	private List<PlanePoint> buildDefaultGaussianQuadrature(int N) {
+	public List<PlanePoint> buildDefaultGaussianQuadrature(int N) {
 
 		Polynomial P0 = new Polynomial(List.of(1.0));
 		Polynomial P1 = new Polynomial(List.of(0.0, 1.0));

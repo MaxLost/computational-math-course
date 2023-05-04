@@ -53,7 +53,7 @@ public class Task5_3 {
 			double fValue = integrator.integrateCompositeGaussianQuadrature(N, M);
 
 			System.out.printf(Locale.US,
-					"\nЗначение интеграла: %.13f\nАбсолютная погрешность: %.8f\nОтносительная погрешность: %.4f%%\n",
+					"\nЗначение интеграла: %.13f\nАбсолютная погрешность: %.5e\nОтносительная погрешность: %.4f%%\n",
 					fValue, Math.abs(fValue - exactValueF),
 					Math.abs(fValue - exactValueF) / fValue * 100);
 

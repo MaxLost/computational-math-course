@@ -60,7 +60,13 @@ public class Task5_2 {
 					Integrator integratorX = new Integrator(p, A, B);
 
 					List<PlanePoint> Af = integratorF.buildGaussianQuadrature(i);
+					List<PlanePoint> d = integratorF.buildDefaultGaussianQuadrature(i);
 					List<PlanePoint> Ax = integratorX.buildGaussianQuadrature(i);
+
+					System.out.println("\nУзлы и коэффициенты изначальной КФ Гаусса\n k |     x_k     |     A_k    ");
+					for (int j = 0; j < i; j++) {
+						System.out.printf(Locale.US, " %d | %11.6f | %11.6f\n", j, d.get(j).getX(), d.get(j).getY());
+					}
 
 					System.out.println("\nУзлы и коэффициенты КФ Гаусса при N = " + i + "\n k |     x_k     |     A_k    ");
 					for (int j = 0; j < i; j++) {
@@ -76,12 +82,12 @@ public class Task5_2 {
 					}
 
 					System.out.printf(Locale.US,
-							"\nЗначение интеграла при f(x) = x^%d: %.13f\nАбсолютная погрешность: %.8f\n" +
+							"\nЗначение интеграла при f(x) = x^%d: %.13f\nАбсолютная погрешность: %.5e\n" +
 									"Относительная погрешность: %.4f%%\n",
 							2*i - 1, pValue, Math.abs(pValue - exactValueP),
 							Math.abs(pValue - exactValueP) / pValue * 100);
 					System.out.printf(Locale.US,
-							"\nЗначение интеграла при f(x) = sin(x)/x: %.13f\nАбсолютная погрешность: %.8f\n" +
+							"\nЗначение интеграла при f(x) = sin(x) / x : %.13f\nАбсолютная погрешность: %.5e\n" +
 									"Относительная погрешность: %.4f%%\n",
 							fValue, Math.abs(fValue - exactValueF),
 							Math.abs(fValue - exactValueF) / fValue * 100);
