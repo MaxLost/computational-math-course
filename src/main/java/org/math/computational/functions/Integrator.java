@@ -251,8 +251,6 @@ public class Integrator {
 		FunctionRootFinder task = new FunctionRootFinder(w, lowerBound, upperBound, 10e-12);
 		X = task.findRoots(10e-8);
 
-		System.out.println("\nОртогональный многочлен:\n" + w);
-
 		return buildInterpolationQuadrature(subsegments, X, momentums);
 	}
 
@@ -310,11 +308,6 @@ public class Integrator {
 	public double integrateCompositeGaussianQuadrature(int N, int M) {
 
 		List<PlanePoint> A = buildDefaultGaussianQuadrature(N);
-
-		System.out.println("\nУзлы и коэффициенты КФ Гаусса\n k |     x_k     |     A_k    ");
-		for (int j = 0; j < N; j++) {
-			System.out.printf(Locale.US, " %d | %11.6f | %11.6f\n", j, A.get(j).getX(), A.get(j).getY());
-		}
 
 		double value = 0;
 		double step = (upperBound - lowerBound) / M;
