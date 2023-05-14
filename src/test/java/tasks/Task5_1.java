@@ -25,10 +25,10 @@ public class Task5_1 {
 		try (Scanner input = new Scanner(System.in).useLocale(Locale.US)) {
 
 			Function f = t -> Math.sin(t);
-			Function x = t -> t;
-			Function x3 = t -> Math.pow(t, 3);
 			Function rho = t -> Math.sqrt(t / (1 - t));
+			//Function rho = t -> Math.sqrt(t);
 
+			//double exactValueF = 0.36422193203213236407385175;
 			double exactValueF = 1.04071063342533; // Value of integral of f(x)*ρ(x) from 0 to 1
 			double exactValueX = 1.17809724509617; // Value of integral of x*ρ(x) from 0 to 1
 
@@ -44,6 +44,10 @@ public class Task5_1 {
 					System.out.println("Слишком малое N, попробуйте ввести большее N");
 				}
 			}
+
+			int finalN = N;
+			Function x = t -> Math.pow(t, finalN - 1);
+			Function x3 = t -> Math.pow(t, 2*finalN - 1);
 
 			List<Double> nodes = new ArrayList<>();
 			String repeat = "yes";
@@ -95,8 +99,8 @@ public class Task5_1 {
 					fValue += Af.get(i).getY() * f.evaluate(Af.get(i).getX());
 				}
 				System.out.printf(Locale.US,
-						"\nf(x) = x : %.13f\nАбсолютная погрешность: %.8f\nОтносительная погрешность: %.4f%%\n",
-						xValue, Math.abs(xValue - momentums.get(N - 1)),
+						"\nf(x) = x^%d : %.13f\nАбсолютная погрешность: %.8f\nОтносительная погрешность: %.4f%%\n",
+						N - 1, xValue, Math.abs(xValue - momentums.get(N - 1)),
 						Math.abs(xValue - momentums.get(N - 1)) / xValue * 100);
 				System.out.printf(Locale.US,
 							"\nf(x) = sin(x) : %.13f\nАбсолютная погрешность: %.8f\nОтносительная погрешность: %.4f%%\n",
@@ -120,8 +124,8 @@ public class Task5_1 {
 					x3Value += pAx3.get(i).getY() * x3.evaluate(pAx3.get(i).getX());
 				}
 				System.out.printf(Locale.US,
-						"\nf(x) = x : %.13f\nАбсолютная погрешность: %.8f\nОтносительная погрешность: %.4f%%\n",
-						x3Value, Math.abs(x3Value - momentums.get(2*N - 1)),
+						"\nf(x) = x^%d : %.13f\nАбсолютная погрешность: %.8f\nОтносительная погрешность: %.4f%%\n",
+						2*N - 1, x3Value, Math.abs(x3Value - momentums.get(2*N - 1)),
 						Math.abs(x3Value - momentums.get(2*N - 1)) / x3Value * 100);
 				System.out.printf(Locale.US,
 						"\nf(x) = sin(x) : %.13f\nАбсолютная погрешность: %.8f\nОтносительная погрешность: %.4f%%\n",

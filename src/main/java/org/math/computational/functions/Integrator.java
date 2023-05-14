@@ -248,10 +248,8 @@ public class Integrator {
 		List<Double> A = new ArrayList<>(X);
 		A.add(1.0);
 		Polynomial w = new Polynomial(A);
-		FunctionRootFinder task = new FunctionRootFinder(w, lowerBound, upperBound, 10e-8);
-		X = task.findRoots(10e-6);
-
-		System.out.println("\nОртогональный многочлен:\n" + w);
+		FunctionRootFinder task = new FunctionRootFinder(w, lowerBound, upperBound, 10e-12);
+		X = task.findRoots(10e-8);
 
 		return buildInterpolationQuadrature(subsegments, X, momentums);
 	}
@@ -261,6 +259,102 @@ public class Integrator {
 		List<Double> momentums = calculateMomentums(weight, 2*subsegments);
 
 		return buildPreciseInterpolationQuadrature(subsegments, momentums);
+	}
+
+	public List<PlanePoint> buildDefaultGaussianQuadrature(int N) {
+
+		Polynomial P0 = new Polynomial(List.of(1.0));
+		Polynomial P1 = new Polynomial(List.of(0.0, 1.0));
+		List<Polynomial> P = new ArrayList<>(List.of(P0, P1));
+
+		for (int i = 2; i <= N; i++) {
+			P.add(P.get(i - 1).scalarMultiply((2.0*i - 1) / i).multiply(P1).sum(P.get(i - 2).scalarMultiply((i - 1.0) / (-1*i))));
+		}
+
+		FunctionRootFinder task = new FunctionRootFinder(P.get(N), -1, 1, 10e-12);
+		List<Double> nodes = task.findRoots(10e-8);
+
+		List<Double> A = new ArrayList<>();
+		for (int i = 0; i < N; i++) {
+			A.add((2 * (1 - Math.pow(nodes.get(i), 2))) / Math.pow(P.get(N - 1).evaluate(nodes.get(i)) * N, 2));
+		}
+
+		List<PlanePoint> result = new ArrayList<>();
+		for (int i = 0; i < N; i++) {
+			result.add(new PlanePoint(nodes.get(i), A.get(i)));
+		}
+		return result;
+	}
+
+	public List<PlanePoint> buildGaussianQuadrature(int N) {
+
+		if (Math.abs(upperBound - 1) > 10e-10 || Math.abs(lowerBound + 1) > 10e-10) {
+			List<PlanePoint> xA = buildDefaultGaussianQuadrature(N);
+			List<PlanePoint> result = new ArrayList<>();
+			double k = (upperBound - lowerBound) / 2;
+			double center = (lowerBound + upperBound) / 2;
+
+			for (int i = 0; i < N; i++) {
+				result.add(new PlanePoint(k * xA.get(i).getX() + center, k * xA.get(i).getY()));
+			}
+
+			return result;
+
+		} else {
+			return buildDefaultGaussianQuadrature(N);
+		}
+	}
+
+	public double integrateCompositeGaussianQuadrature(int N, int M) {
+
+		List<PlanePoint> A = buildDefaultGaussianQuadrature(N);
+
+		double value = 0;
+		double step = (upperBound - lowerBound) / M;
+		double x = lowerBound;
+		double k = step / 2;
+		for (int i = 0; i < M; i++) {
+			double center = x + k;
+			for (int j = 0; j < N; j++) {
+				value += k * A.get(j).getY() * f.evaluate(k * A.get(j).getX() + center);
+			}
+			x += step;
+		}
+
+		return value;
+	}
+
+	private List<PlanePoint> buildDefaultMohlerQuadrature(int N) {
+
+		List<Double> nodes = new ArrayList<>();
+		for (int i = 1; i <= N; i++) {
+			nodes.add(Math.cos((2*i - 1) * Math.PI / (2 * N)));
+		}
+
+		List<PlanePoint> result = new ArrayList<>();
+		for (int i = 0; i < N; i++) {
+			result.add(new PlanePoint(nodes.get(i), Math.PI / N));
+		}
+		return result;
+	}
+
+	public List<PlanePoint> buildMohlerQuadrature(int N) {
+
+		if (Math.abs(upperBound - 1) > 10e-10 || Math.abs(lowerBound + 1) > 10e-10) {
+			List<PlanePoint> xA = buildDefaultMohlerQuadrature(N);
+			List<PlanePoint> result = new ArrayList<>();
+			double k = (upperBound - lowerBound) / 2;
+			double center = (lowerBound + upperBound) / 2;
+
+			for (int i = 0; i < N; i++) {
+				result.add(new PlanePoint(k * xA.get(i).getX() + center, k * Math.PI / N));
+			}
+
+			return result;
+
+		} else {
+			return buildDefaultMohlerQuadrature(N);
+		}
 	}
 
 }
