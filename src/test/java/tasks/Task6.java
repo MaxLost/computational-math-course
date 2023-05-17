@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 
 public class Task6 {
 
-	private static Polynomial getTaylorExpansion(double x0, double y0, Function f) {
+	private static Polynomial getTaylorExpansion(double x0, double y0, TransformR2 f) {
 
-		double dy = f.evaluate(x0);
+		double dy = f.evaluate(x0, y0);
 		double ddy = -2*y0*dy;
 		double dddy = -2*(Math.pow(dy, 2) + y0*ddy);
 		double ddddy = -2*(2*dy*ddy + dy*ddy + y0*dddy);
@@ -59,8 +59,7 @@ public class Task6 {
 
 			double x0 = 0;
 			double y0 = 0;
-			Function y = t -> y0;
-			Function f = t -> -1*Math.pow(y.evaluate(t), 2) + 1;
+			TransformR2 f = (u, v) -> -1*Math.pow(v, 2) + 1;
 
 			Function phi = t -> (Math.exp(2*t) - 1) / (Math.exp(2*t) + 1); // Solution of given IVP
 
@@ -96,29 +95,28 @@ public class Task6 {
 						adams.get(i).getX(), adams.get(i).getY(), Math.abs(adams.get(i).getY() - exactValues.get(i).getY()));
 			}
 
-			TransformR2 F = (u, v) -> -1*Math.pow(v, 2) + 1;
-			List<PlanePoint> rungeKutta = solver.solveRungeKutta(F);
+			List<PlanePoint> rungeKutta = solver.solveRungeKutta(f);
 			System.out.println("\nМетод Рунге-Кутты 4-го порядка\n    x_k     |     f(x_k)     |    Абс.погр.");
 			for (int i = 0; i < rungeKutta.size(); i++) {
 				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
 						rungeKutta.get(i).getX(), rungeKutta.get(i).getY(), Math.abs(rungeKutta.get(i).getY() - exactValues.get(i + 2).getY()));
 			}
 
-			List<PlanePoint> euler = solver.solveEuler(F);
+			List<PlanePoint> euler = solver.solveEuler(f);
 			System.out.println("\nМетод Эйлера\n    x_k     |     f(x_k)     |    Абс.погр.");
 			for (int i = 0; i < euler.size(); i++) {
 				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
 						euler.get(i).getX(), euler.get(i).getY(), Math.abs(euler.get(i).getY() - exactValues.get(i + 2).getY()));
 			}
 
-			List<PlanePoint> euler1 = solver.solveEuler1(F);
+			List<PlanePoint> euler1 = solver.solveEuler1(f);
 			System.out.println("\nМетод Эйлера I\n    x_k     |     f(x_k)     |    Абс.погр.");
 			for (int i = 0; i < euler1.size(); i++) {
 				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
 						euler1.get(i).getX(), euler1.get(i).getY(), Math.abs(euler1.get(i).getY() - exactValues.get(i + 2).getY()));
 			}
 
-			List<PlanePoint> euler2 = solver.solveEuler2(F);
+			List<PlanePoint> euler2 = solver.solveEuler2(f);
 			System.out.println("\nМетод Эйлера II\n    x_k     |     f(x_k)     |    Абс.погр.");
 			for (int i = 0; i < euler2.size(); i++) {
 				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
