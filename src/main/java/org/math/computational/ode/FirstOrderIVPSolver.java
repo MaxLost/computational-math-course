@@ -25,33 +25,33 @@ public class FirstOrderIVPSolver {
 		this.step = step;
 	}
 
-	public List<PlanePoint> solveExtrapolationAdams(List<PlanePoint> fValues) {
+	public List<PlanePoint> solveExtrapolationAdams(List<PlanePoint> fValues, TransformR2 f) {
 
-		double[][] dividedDiff = new double[N + 3][7];
+		double[][] finiteDiff = new double[N + 3][7];
 		for (int i = -2; i <= N; i++) {
-			dividedDiff[i + 2][0] = x0 + step*i;
+			finiteDiff[i + 2][0] = x0 + step*i;
 		}
 		for (int i = 0; i < fValues.size(); i++) {
-			dividedDiff[i][1] = fValues.get(i).getY();
-			dividedDiff[i][2] = step*fValues.get(i).getY();
+			finiteDiff[i][1] = fValues.get(i).getY();
+			finiteDiff[i][2] = step*f.evaluate(finiteDiff[i][0], finiteDiff[i][1]);
 		}
 		for (int i = 3; i < 7; i++) {
 			for (int j = 0; j < 7 - i; j++) {
-				dividedDiff[j][i] = dividedDiff[j + 1][i - 1] - dividedDiff[j][i - 1];
+				finiteDiff[j][i] = finiteDiff[j + 1][i - 1] - finiteDiff[j][i - 1];
 			}
 		}
 
 		List<PlanePoint> result = new ArrayList<>(fValues);
 		for (int i = 5; i <= N + 2; i++) {
-			dividedDiff[i][1] = dividedDiff[i - 1][1] + dividedDiff[i - 1][2] + dividedDiff[i - 2][3] / 2 +
-					5*dividedDiff[i - 3][4] / 12 + 3*dividedDiff[i - 4][5] / 8 + 251*dividedDiff[i - 5][6] / 720;
-			dividedDiff[i][2] = step*dividedDiff[i][1];
-			dividedDiff[i - 1][3] = dividedDiff[i][2] - dividedDiff[i - 1][2];
-			dividedDiff[i - 2][4] = dividedDiff[i][3] - dividedDiff[i - 1][3];
-			dividedDiff[i - 3][5] = dividedDiff[i][4] - dividedDiff[i - 1][4];
-			dividedDiff[i - 4][6] = dividedDiff[i][5] - dividedDiff[i - 1][5];
+			finiteDiff[i][1] = finiteDiff[i - 1][1] + finiteDiff[i - 1][2] + finiteDiff[i - 2][3] / 2.0 +
+					5*finiteDiff[i - 3][4] / 12.0 + 3*finiteDiff[i - 4][5] / 8.0 + 251*finiteDiff[i - 5][6] / 720.0;
+			finiteDiff[i][2] = step*f.evaluate(finiteDiff[i][0], finiteDiff[i][1]);
+			finiteDiff[i - 1][3] = finiteDiff[i][2] - finiteDiff[i - 1][2];
+			finiteDiff[i - 2][4] = finiteDiff[i - 1][3] - finiteDiff[i - 2][3];
+			finiteDiff[i - 3][5] = finiteDiff[i - 2][4] - finiteDiff[i - 3][4];
+			finiteDiff[i - 4][6] = finiteDiff[i - 3][5] - finiteDiff[i - 4][5];
 
-			result.add(new PlanePoint(dividedDiff[i][0], dividedDiff[i][1]));
+			result.add(new PlanePoint(finiteDiff[i][0], finiteDiff[i][1]));
 		}
 
 		return result;
