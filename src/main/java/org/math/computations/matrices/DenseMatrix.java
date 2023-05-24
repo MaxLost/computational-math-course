@@ -211,27 +211,33 @@ public class DenseMatrix implements Matrix
 			double[][] A = this.toArray();
 			double[][] U = new double[rowCount][rowCount];
 			double[][] L = new double[rowCount][rowCount];
-
-			for (int i = 0; i < rowCount; i++) {
-				U[i][i] = 1;
-			}
 			double sum = 0;
 
 			for (int i = 0; i < rowCount; i++) {
-				for (int j = i; j < rowCount; j++) {
+				for (int k = i; k < rowCount; k++) {
 					sum = 0;
-					for (int k = 0; k < i; k++) {
-						sum = sum + L[j][k] * U[k][i];
+					for (int j = 0; j < i; j++) {
+						sum += (L[i][j] * U[j][k]);
 					}
-					L[j][i] = A[j][i] - sum;
+
+					U[i][k] = A[i][k] - sum;
 				}
 
-				for (int j = i; j < rowCount; j++) {
-					sum = 0;
-					for(int k = 0; k < i; k++) {
-						sum = sum + L[i][k] * U[k][j];
+				for (int k = i; k < rowCount; k++) {
+					if (i == k) {
+						L[i][i] = 1;
+					} else {
+						sum = 0;
+						for (int j = 0; j < i; j++) {
+							sum += (L[k][j] * U[j][i]);
+						}
+
+						if (Math.abs(U[i][i]) < 10e-12) {
+							return Double.NaN;
+						}
+
+						L[k][i] = (A[k][i] - sum) / U[i][i];
 					}
-					U[i][j] = (A[i][j] - sum) / L[i][i];
 				}
 			}
 
