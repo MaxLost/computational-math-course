@@ -70,58 +70,70 @@ public class Task6 {
 
 			List<PlanePoint> exactValues = new ArrayList<>();
 
-			System.out.println("\nТочное решение\n    x_k     |     f(x_k)    ");
+			//System.out.println("\nТочное решение\n    x_k     |     f(x_k)    ");
 			for (int i = 0; i < x.size(); i++) {
 				double value = phi.evaluate(x.get(i));
-				System.out.printf(Locale.US, "%11.6f | %11.6f\n", x.get(i), value);
+				//System.out.printf(Locale.US, "%11.6f | %11.6f\n", x.get(i), value);
 				exactValues.add(new PlanePoint(x.get(i), value));
 			}
 
 			List<PlanePoint> taylor = new ArrayList<>();
 			Polynomial T = getTaylorExpansion(x0, y0, f);
-			System.out.println("\nРазложение в ряд Тейлора\n    x_k     |     f(x_k)     |    Абс.погр.");
+			//System.out.println("\nРазложение в ряд Тейлора\n    x_k     |     f(x_k)     |    Абс.погр.");
 			for (int i = 0; i < x.size(); i++) {
 				taylor.add(new PlanePoint(x.get(i), T.evaluate(x.get(i))));
-				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
-						taylor.get(i).getX(), taylor.get(i).getY(), Math.abs(taylor.get(i).getY() - exactValues.get(i).getY()));
+//				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
+//						taylor.get(i).getX(), taylor.get(i).getY(), Math.abs(taylor.get(i).getY() - exactValues.get(i).getY()));
 			}
+//			System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
+//					taylor.get(taylor.size()).getX(), taylor.get(taylor.size()).getY(), Math.abs(taylor.get(taylor.size()).getY() - exactValues.get(taylor.size()).getY()));
 
 			FirstOrderIVPSolver solver = new FirstOrderIVPSolver(x0, y0, h, N);
 
-			List<PlanePoint> adams = solver.solveExtrapolationAdams(taylor.stream().limit(5).collect(Collectors.toList()));
+			List<PlanePoint> adams = solver.solveExtrapolationAdams(exactValues.stream().limit(5).collect(Collectors.toList()), f);
 			System.out.println("\nЭкстраполяционный метод Адамса 4-го порядка\n    x_k     |     f(x_k)     |    Абс.погр.");
-			for (int i = 0; i < adams.size(); i++) {
-				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
-						adams.get(i).getX(), adams.get(i).getY(), Math.abs(adams.get(i).getY() - exactValues.get(i).getY()));
-			}
+//			for (int i = 0; i < adams.size(); i++) {
+//				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
+//						adams.get(i).getX(), adams.get(i).getY(), Math.abs(adams.get(i).getY() - exactValues.get(i).getY()));
+//			}
+			System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
+						adams.get(adams.size() - 1).getX(), adams.get(adams.size() - 1).getY(), Math.abs(adams.get(adams.size() - 1).getY() - exactValues.get(adams.size() - 1).getY()));
 
 			List<PlanePoint> rungeKutta = solver.solveRungeKutta(f);
 			System.out.println("\nМетод Рунге-Кутты 4-го порядка\n    x_k     |     f(x_k)     |    Абс.погр.");
-			for (int i = 0; i < rungeKutta.size(); i++) {
-				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
-						rungeKutta.get(i).getX(), rungeKutta.get(i).getY(), Math.abs(rungeKutta.get(i).getY() - exactValues.get(i + 2).getY()));
-			}
+//			for (int i = 0; i < rungeKutta.size(); i++) {
+//				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
+//						rungeKutta.get(i).getX(), rungeKutta.get(i).getY(), Math.abs(rungeKutta.get(i).getY() - exactValues.get(i + 2).getY()));
+//			}
+			System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
+					rungeKutta.get(rungeKutta.size() - 1).getX(), rungeKutta.get(rungeKutta.size() - 1).getY(), Math.abs(rungeKutta.get(rungeKutta.size() - 1).getY() - exactValues.get(rungeKutta.size() + 1).getY()));
 
 			List<PlanePoint> euler = solver.solveEuler(f);
 			System.out.println("\nМетод Эйлера\n    x_k     |     f(x_k)     |    Абс.погр.");
 			for (int i = 0; i < euler.size(); i++) {
-				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
-						euler.get(i).getX(), euler.get(i).getY(), Math.abs(euler.get(i).getY() - exactValues.get(i + 2).getY()));
+//				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
+//						euler.get(i).getX(), euler.get(i).getY(), Math.abs(euler.get(i).getY() - exactValues.get(i + 2).getY()));
 			}
+			System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
+					euler.get(euler.size() - 1).getX(), euler.get(euler.size() - 1).getY(), Math.abs(euler.get(euler.size() - 1).getY() - exactValues.get(euler.size() + 1).getY()));
 
 			List<PlanePoint> euler1 = solver.solveEuler1(f);
 			System.out.println("\nМетод Эйлера I\n    x_k     |     f(x_k)     |    Абс.погр.");
-			for (int i = 0; i < euler1.size(); i++) {
-				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
-						euler1.get(i).getX(), euler1.get(i).getY(), Math.abs(euler1.get(i).getY() - exactValues.get(i + 2).getY()));
-			}
+//			for (int i = 0; i < euler1.size(); i++) {
+//				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
+//						euler1.get(i).getX(), euler1.get(i).getY(), Math.abs(euler1.get(i).getY() - exactValues.get(i + 2).getY()));
+//			}
+			System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
+					euler1.get(euler1.size() - 1).getX(), euler1.get(euler1.size() - 1).getY(), Math.abs(euler1.get(euler1.size() - 1).getY() - exactValues.get(euler1.size() + 1).getY()));
 
 			List<PlanePoint> euler2 = solver.solveEuler2(f);
 			System.out.println("\nМетод Эйлера II\n    x_k     |     f(x_k)     |    Абс.погр.");
-			for (int i = 0; i < euler2.size(); i++) {
-				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
-						euler2.get(i).getX(), euler2.get(i).getY(), Math.abs(euler2.get(i).getY() - exactValues.get(i + 2).getY()));
-			}
+//			for (int i = 0; i < euler2.size(); i++) {
+//				System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
+//						euler2.get(i).getX(), euler2.get(i).getY(), Math.abs(euler2.get(i).getY() - exactValues.get(i + 2).getY()));
+//			}
+			System.out.printf(Locale.US, "%11.6f | %14.6f | %12.3e\n",
+					euler2.get(euler2.size() - 1).getX(), euler2.get(euler2.size() - 1).getY(), Math.abs(euler2.get(euler2.size() - 1).getY() - exactValues.get(euler2.size() + 1).getY()));
 		}
 	}
 
