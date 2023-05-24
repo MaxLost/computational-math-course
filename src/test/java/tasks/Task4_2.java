@@ -1,7 +1,7 @@
 package tasks;
 
-import org.math.computational.functions.Function;
-import org.math.computational.functions.Integrator;
+import org.math.computations.functions.Function;
+import org.math.computations.functions.Integrator;
 
 import static tasks.Utils.dfMax;
 import static tasks.Utils.ddfMax;

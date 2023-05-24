@@ -1,4 +1,4 @@
-package org.math.computational.matrices;
+package org.math.computations.matrices;
 
 public class MulTaskManager {
 

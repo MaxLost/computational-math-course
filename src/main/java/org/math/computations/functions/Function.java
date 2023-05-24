@@ -1,4 +1,4 @@
-package org.math.computational.functions;
+package org.math.computations.functions;
 
 @FunctionalInterface
 public interface Function {

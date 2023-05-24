@@ -1,5 +1,5 @@
 import org.junit.Test;
-import org.math.computational.Polynomial;
+import org.math.computations.Polynomial;
 
 import java.util.Arrays;
 

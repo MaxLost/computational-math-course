@@ -1,8 +1,8 @@
 package tasks;
 
-import org.math.computational.PlanePoint;
-import org.math.computational.functions.Function;
-import org.math.computational.functions.Integrator;
+import org.math.computations.PlanePoint;
+import org.math.computations.functions.Function;
+import org.math.computations.functions.Integrator;
 
 import java.util.List;
 import java.util.Locale;

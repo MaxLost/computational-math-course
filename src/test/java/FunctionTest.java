@@ -1,4 +1,4 @@
-import org.math.computational.functions.*;
+import org.math.computations.functions.*;
 
 import org.junit.Test;
 
