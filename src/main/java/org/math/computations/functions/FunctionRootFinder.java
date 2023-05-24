@@ -1,10 +1,10 @@
-package org.math.computational.functions;
+package org.math.computations.functions;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import org.math.computational.Segment;
+import org.math.computations.Segment;
 
 public class FunctionRootFinder {
 

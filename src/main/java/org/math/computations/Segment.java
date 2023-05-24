@@ -1,4 +1,4 @@
-package org.math.computational;
+package org.math.computations;
 
 import java.util.ArrayList;
 import java.util.List;

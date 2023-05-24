@@ -1,11 +1,10 @@
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.math.computational.matrices.*;
+import org.math.computations.matrices.*;
 import static org.junit.Assert.*;
 
 public class MatrixTest

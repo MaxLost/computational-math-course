@@ -1,9 +1,8 @@
-package org.math.computational;
+package org.math.computations;
 
-import org.math.computational.functions.Function;
+import org.math.computations.functions.Function;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Polynomial implements Function {

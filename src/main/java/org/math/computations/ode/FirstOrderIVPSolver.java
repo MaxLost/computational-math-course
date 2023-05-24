@@ -1,14 +1,10 @@
-package org.math.computational.ode;
+package org.math.computations.ode;
 
-import org.math.computational.PlanePoint;
-import org.math.computational.Polynomial;
-import org.math.computational.functions.Function;
-import org.math.computational.functions.TransformR2;
+import org.math.computations.PlanePoint;
+import org.math.computations.functions.TransformR2;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.math.computational.functions.Utils.*;
 
 public class FirstOrderIVPSolver {
 

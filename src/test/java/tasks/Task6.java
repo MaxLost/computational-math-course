@@ -1,10 +1,10 @@
 package tasks;
 
-import org.math.computational.PlanePoint;
-import org.math.computational.Polynomial;
-import org.math.computational.functions.Function;
-import org.math.computational.functions.TransformR2;
-import org.math.computational.ode.FirstOrderIVPSolver;
+import org.math.computations.PlanePoint;
+import org.math.computations.Polynomial;
+import org.math.computations.functions.Function;
+import org.math.computations.functions.TransformR2;
+import org.math.computations.ode.FirstOrderIVPSolver;
 
 import java.util.ArrayList;
 import java.util.List;

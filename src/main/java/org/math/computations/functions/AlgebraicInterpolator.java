@@ -1,12 +1,11 @@
-package org.math.computational.functions;
+package org.math.computations.functions;
 
-import org.math.computational.PlanePoint;
-import org.math.computational.Polynomial;
-import org.math.computational.matrices.DenseMatrix;
-import org.math.computational.matrices.Matrix;
+import org.math.computations.PlanePoint;
+import org.math.computations.Polynomial;
+import org.math.computations.matrices.DenseMatrix;
+import org.math.computations.matrices.Matrix;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 

@@ -1,8 +1,8 @@
 package tasks;
 
-import org.math.computational.PlanePoint;
-import org.math.computational.functions.AlgebraicInterpolator;
-import org.math.computational.functions.Function;
+import org.math.computations.PlanePoint;
+import org.math.computations.functions.AlgebraicInterpolator;
+import org.math.computations.functions.Function;
 
 import java.util.*;
 

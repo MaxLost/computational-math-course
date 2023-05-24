@@ -1,4 +1,4 @@
-package org.math.computational.matrices;
+package org.math.computations.matrices;
 
 import java.io.IOException;
 import java.nio.file.Path;

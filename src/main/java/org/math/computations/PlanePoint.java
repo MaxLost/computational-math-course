@@ -1,4 +1,4 @@
-package org.math.computational;
+package org.math.computations;
 
 public class PlanePoint {
 

@@ -1,7 +1,7 @@
 package tasks;
 
-import org.math.computational.functions.Function;
-import org.math.computational.functions.FunctionRootFinder;
+import org.math.computations.functions.Function;
+import org.math.computations.functions.FunctionRootFinder;
 
 public class Task1 {
 

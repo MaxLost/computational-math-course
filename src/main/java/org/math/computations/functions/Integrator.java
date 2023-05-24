@@ -1,13 +1,12 @@
-package org.math.computational.functions;
+package org.math.computations.functions;
 
-import org.math.computational.PlanePoint;
-import org.math.computational.Polynomial;
-import org.math.computational.matrices.DenseMatrix;
-import org.math.computational.matrices.LinearSystemSolver;
+import org.math.computations.PlanePoint;
+import org.math.computations.Polynomial;
+import org.math.computations.matrices.DenseMatrix;
+import org.math.computations.matrices.LinearSystemSolver;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class Integrator {
 

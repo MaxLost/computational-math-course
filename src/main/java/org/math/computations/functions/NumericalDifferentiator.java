@@ -1,6 +1,6 @@
-package org.math.computational.functions;
+package org.math.computations.functions;
 
-import org.math.computational.PlanePoint;
+import org.math.computations.PlanePoint;
 
 import java.util.ArrayList;
 import java.util.List;
