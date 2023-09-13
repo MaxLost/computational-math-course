@@ -48,11 +48,6 @@ public class LinearSystemSolver {
         isSmallLeadingElement = true;
       }
 
-      for (int j = i; j < matrixSize[1]; j++) {
-
-        data[i][j] = data[i][j] / leadingElement;
-      }
-
       for (int j = i + 1; j < matrixSize[0]; j++) {
 
         double c = data[j][i] / data[i][i];

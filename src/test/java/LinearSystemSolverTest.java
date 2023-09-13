@@ -27,7 +27,7 @@ public class LinearSystemSolverTest {
 
     for (int i = 0; i < rowCount; i++) {
       assertTrue(
-          Math.abs(answer.getElement(0, i) - matrix.getElement(colCount - 1, i)) < 10e-12);
+          Math.abs(answer.getElement(0, i) - matrix.getElement(colCount - 1, i)) < 10e-16);
     }
   }
 
