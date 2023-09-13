@@ -1,4 +1,4 @@
-package tasks;
+package tasks.sem4;
 
 import org.math.computations.PlanePoint;
 import org.math.computations.functions.NumericalDifferentiator;
@@ -7,6 +7,7 @@ import org.math.computations.functions.Function;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import tasks.Utils;
 
 public class Task3_2 {
 

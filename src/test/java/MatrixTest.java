@@ -297,14 +297,14 @@ public class MatrixTest
 	}
 
 	@Test
-	public void linearSystemSolverTest() {
+	public void linearSolverTest() {
 		double[][] a = {{1.0, 4.0, 0.0}, {0.0, 3.0, -2.0}, {-5.0, 1.0, 1.0}};
 		DenseMatrix A = new DenseMatrix(3, 3, a);
 
 		double[][] b = {{1}, {0}, {-3}};
 		DenseMatrix B = new DenseMatrix(3, 1, b);
 
-		LinearSystemSolver task = new LinearSystemSolver(A, B);
+		LinearSolver task = new LinearSolver(A, B);
 		List<Double> expected = Arrays.asList(0.6444444444444, 0.08888888888888, 0.1333333333333);
 		List<Double> result = task.solve();
 

@@ -3,6 +3,7 @@ package org.math.computations.functions;
 import org.math.computations.PlanePoint;
 import org.math.computations.Polynomial;
 import org.math.computations.matrices.DenseMatrix;
+import org.math.computations.matrices.LinearSolver;
 import org.math.computations.matrices.LinearSystemSolver;
 
 import java.util.ArrayList;
@@ -179,7 +180,7 @@ public class Integrator {
 
 		DenseMatrix M = new DenseMatrix(N, N, m);
 		DenseMatrix mu = new DenseMatrix(N, 1, momentum_array);
-		LinearSystemSolver linearSolver = new LinearSystemSolver(M, mu);
+		LinearSolver linearSolver = new LinearSolver(M, mu);
 		List<Double> A = linearSolver.solve();
 
 		List<PlanePoint> result = new ArrayList<>();
@@ -242,7 +243,7 @@ public class Integrator {
 
 		DenseMatrix M = new DenseMatrix(subsegments, subsegments, m);
 		DenseMatrix mu = new DenseMatrix(subsegments, 1, momentum_array);
-		LinearSystemSolver linearSolver = new LinearSystemSolver(M, mu);
+		LinearSolver linearSolver = new LinearSolver(M, mu);
 		List<Double> X = linearSolver.solve();
 		List<Double> A = new ArrayList<>(X);
 		A.add(1.0);
