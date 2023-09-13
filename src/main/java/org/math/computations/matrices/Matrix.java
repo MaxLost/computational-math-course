@@ -1,9 +1,13 @@
 package org.math.computations.matrices;
 
 
+import java.util.List;
+
 public interface Matrix
 {
   double EPSILON = 10e-6;
+
+  int[] getSize();
 
   double getElement(int x, int y);
 

@@ -4,14 +4,16 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 
 public class DenseMatrix implements Matrix {
 
   private final double[][] data;
-  public final int rowCount;
-  public final int colCount;
+  private final int rowCount;
+  private final int colCount;
   private final int hashCode;
 
   /**
@@ -80,6 +82,11 @@ public class DenseMatrix implements Matrix {
     }
   }
 
+  @Override
+  public int[] getSize() {
+    return new int[]{rowCount, colCount};
+  }
+
   /**
    * Single-thread matrix multiplication
    * <p>
@@ -123,8 +130,8 @@ public class DenseMatrix implements Matrix {
   }
 
   private Matrix mulSparse(SparseMatrix m) {
-    if (this.colCount == m.row_count) {
-      if (this.rowCount == 0 || m.col_count == 0) {
+    if (this.colCount == m.getSize()[0]) {
+      if (this.rowCount == 0 || m.getSize()[0] == 0) {
         return new SparseMatrix(0, 0, null);
       }
 
@@ -339,7 +346,7 @@ public class DenseMatrix implements Matrix {
   }
 
   private boolean equalsSparse(SparseMatrix other) {
-    if (this.rowCount != other.row_count || this.colCount != other.col_count) {
+    if (this.rowCount != other.getSize()[0] || this.colCount != other.getSize()[1]) {
       return false;
     }
 

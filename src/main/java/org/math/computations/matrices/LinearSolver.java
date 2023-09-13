@@ -46,17 +46,18 @@ public class LinearSolver {
 
     double[][] matrix = matrixA.toArray();
     double sum = 0;
+    int[] matrixSize = matrixA.getSize();
 
-    for (int i = 0; i < matrixA.colCount - 1; i++) {
-      for (int j = i + 1; j < matrixA.rowCount; j++) {
-        for (int k = i + 1; k < matrixA.colCount; k++) {
+    for (int i = 0; i < matrixSize[1] - 1; i++) {
+      for (int j = i + 1; j < matrixSize[0]; j++) {
+        for (int k = i + 1; k < matrixSize[1]; k++) {
           matrix[j][k] -= (matrix[i][k] * matrix[j][i]) / matrix[i][i];
         }
       }
     }
 
     x[0] = b[0];
-    for (int i = 1; i < matrixA.colCount; i++) {
+    for (int i = 1; i < matrixSize[0]; i++) {
       sum = 0;
       for (int j = 0; j < i; j++) {
         sum += matrix[i][j] * x[j];
@@ -64,9 +65,9 @@ public class LinearSolver {
       x[i] = b[i] - sum;
     }
 
-    for (int i = matrixA.colCount - 1; i >= 0; i--) {
+    for (int i = matrixSize[1] - 1; i >= 0; i--) {
       sum = 0;
-      for (int j = i + 1; j < matrixA.colCount; j++) {
+      for (int j = i + 1; j < matrixSize[1]; j++) {
         sum += matrix[i][j] * x[j];
       }
       x[i] = (x[i] - sum) / matrix[i][i];
