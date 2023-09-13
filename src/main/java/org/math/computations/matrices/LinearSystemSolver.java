@@ -1,74 +1,101 @@
 package org.math.computations.matrices;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+/**
+ * Class for finding unique solution X for linear system of equations: A @ X = B.
+ */
 public class LinearSystemSolver {
 
-	private final DenseMatrix A;
-	private final DenseMatrix B;
+  private final Matrix augmentedMatrix;
 
-	/**
-	 * Class for finding unique solution X for linear system of equations: A @ X = B
-	 * <br>
-	 * Where A - N x N matrix, X - N x 1 vector, B - N x 1 vector
-	 * @param A N x N matrix
-	 * @param B N x 1 vector
-	 */
-	public LinearSystemSolver (DenseMatrix A, DenseMatrix B) {
-		this.A = A;
-		this.B = (DenseMatrix) B.transpose();
-	}
+  /**
+   * Initialization of linear system solver for finding unique solution X: A @ X = B.
+   * <br>
+   * Where A - N x N matrix, X - N x 1 vector, B - N x 1 vector
+   *
+   * @param augmentedMatrix N x N+1 augmented matrix of linear system A @ X = B
+   */
+  public LinearSystemSolver(Matrix augmentedMatrix) {
+    this.augmentedMatrix = augmentedMatrix;
+  }
 
-	/**
-	 * Finds unique solution linear system: A @ X = B
-	 * <br>
-	 * Where A - N x N matrix and det(A) != 0, X - N x 1 vector, B - N x 1 vector
-	 * @return X vector as a list
-	 */
-	public List<Double> solve() {
+  /**
+   * Finds unique solution of linear system: A @ X = B.
+   *
+   * @param method method of solving system
+   *
+   * @return solution as vector
+   */
+  public Matrix solve(String method) {
 
-		double[][] data = A.toArray();
-		double[] b = B.toArray()[0];
+    return switch (method) {
+      case "DG" -> solveDefaultGauss();
+      case "IG" -> solveImprovedGauss();
+      default -> solveLuDecomposition();
+    };
+  }
 
-		Double[] x = new Double[b.length];
+  private Matrix solveDefaultGauss() {
 
-		double det = A.det();
+    int[] matrixSize = augmentedMatrix.getSize();
+    double[][] data = augmentedMatrix.toArray();
 
-		if (Math.abs(det) < 10e-32){
-			throw new RuntimeException("Finding unique solution for this system is impossible because det(A) = 0");
-		}
+    boolean isSmallLeadingElement = false;
 
-		double[][] M = A.toArray();
-		double sum = 0;
+    for (int i = 0; i < matrixSize[1] - 1; i++) {
 
-		for (int i = 0; i < A.colCount - 1; i++) {
-			for (int j = i + 1; j < A.rowCount; j++) {
-				for (int k = i + 1; k < A.colCount; k++){
-					M[j][k] -= (M[i][k] * M[j][i]) / M[i][i];
-				}
-			}
-		}
+      double leadingElement = data[i][i];
+      if (Math.abs(leadingElement) < 10e-8) {
+        isSmallLeadingElement = true;
+      }
 
-		x[0] = b[0];
-		for (int i = 1; i < A.colCount; i++) {
-			sum = 0;
-			for (int j = 0; j < i; j++) {
-				sum += M[i][j] * x[j];
-			}
-			x[i] = b[i] - sum;
-		}
+      for (int j = i; j < matrixSize[1]; j++) {
 
-		for (int i = A.colCount - 1; i >= 0; i--) {
-			sum = 0;
-			for (int j = i + 1; j < A.colCount; j++) {
-				sum += M[i][j] * x[j];
-			}
-			x[i] = (x[i] - sum) / M[i][i];
-		}
+        data[i][j] = data[i][j] / leadingElement;
+      }
 
-		return Arrays.asList(x);
-	}
+      for (int j = i + 1; j < matrixSize[0]; j++) {
+
+        double c = data[j][i] / data[i][i];
+        for (int k = i; k < matrixSize[1]; k++) {
+
+          data[j][k] = data[j][k] - data[i][k] * c;
+        }
+      }
+    }
+
+    for (int i = matrixSize[0] - 1; i >= 0; i--) {
+
+      for (int j = matrixSize[0]; j >= 0; j--) {
+        data[i][j] = data[i][j] / data[i][i];
+      }
+
+      for (int j = i - 1; j >= 0; j--) {
+
+        double c = data[j][i] / data[i][i];
+        for (int k = matrixSize[0]; k >= 0; k--) {
+          data[j][k] = data[j][k] - data[i][k] * c;
+        }
+      }
+    }
+
+    if (isSmallLeadingElement) {
+      throw new RuntimeException("Result may be incorrect due to small leading elements");
+    }
+
+    double[][] result = new double[matrixSize[0]][1];
+    for (int i = 0; i < matrixSize[0]; i++) {
+      result[i][0] = data[i][matrixSize[1] - 1];
+    }
+
+    return new DenseMatrix(matrixSize[0], 1, result);
+  }
+
+  private Matrix solveImprovedGauss() {
+    return null;
+  }
+
+  private Matrix solveLuDecomposition() {
+    return null;
+  }
 
 }
