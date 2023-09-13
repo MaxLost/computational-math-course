@@ -29,4 +29,6 @@ public interface Matrix {
    * @return result of matrix multiplication, C matrix in (1)
    */
   Matrix dmul(Matrix o);
+
+  double[][] toArray();
 }

@@ -250,6 +250,17 @@ public class SparseMatrix implements Matrix
 		}
 	}
 
+	@Override
+	public double[][] toArray() {
+		double[][] result = new double[rowCount][colCount];
+		for (int i = 0; i < rowCount; i++) {
+			for (int j = 0; j < colCount; j++) {
+				result[i][j] = this.getElement(j, i);
+			}
+		}
+		return result;
+	}
+
 	@Override public int hashCode(){
 
 		String caller = String.valueOf( (new Throwable().getStackTrace())[1] );

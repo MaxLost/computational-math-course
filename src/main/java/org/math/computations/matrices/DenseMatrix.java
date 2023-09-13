@@ -269,6 +269,7 @@ public class DenseMatrix implements Matrix {
     }
   }
 
+  @Override
   public double[][] toArray() {
     double[][] result = new double[rowCount][colCount];
     for (int i = 0; i < rowCount; i++) {
