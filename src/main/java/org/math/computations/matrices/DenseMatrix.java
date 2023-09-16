@@ -1,5 +1,7 @@
 package org.math.computations.matrices;
 
+import static org.math.computations.matrices.Decomposer.getLuDecomposition;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -211,47 +213,14 @@ public class DenseMatrix implements Matrix {
       throw new RuntimeException("Cannot compute determinant for non-square matrix");
     } else {
 
-      double[][] A = this.toArray();
-      double[][] U = new double[rowCount][rowCount];
-      double[][] L = new double[rowCount][rowCount];
-      double sum = 0;
+      Matrix[] decomposed = getLuDecomposition(this);
 
-      for (int i = 0; i < rowCount; i++) {
-        for (int k = i; k < rowCount; k++) {
-          sum = 0;
-          for (int j = 0; j < i; j++) {
-            sum += (L[i][j] * U[j][k]);
-          }
-
-          U[i][k] = A[i][k] - sum;
-        }
-
-        for (int k = i; k < rowCount; k++) {
-          if (i == k) {
-            L[i][i] = 1;
-          } else {
-            sum = 0;
-            for (int j = 0; j < i; j++) {
-              sum += (L[k][j] * U[j][i]);
-            }
-
-            if (Math.abs(U[i][i]) < 10e-12) {
-              return Double.NaN;
-            }
-
-            L[k][i] = (A[k][i] - sum) / U[i][i];
-          }
-        }
+      double det = 1;
+      for (int i = 0; i < this.rowCount; i++) {
+        det *= decomposed[1].getElement(i, i);
       }
 
-      double detU = 1;
-      double detL = 1;
-
-      for (int i = 0; i < rowCount; i++) {
-        detU *= U[i][i];
-        detL *= L[i][i];
-      }
-      return detU * detL;
+      return det;
     }
   }
 

@@ -1,13 +1,28 @@
 package org.math.computations.matrices;
 
+/**
+ * Class that provides methods for various matrix decompositions.
+ */
 public class Decomposer {
 
+  private Decomposer() {}
+
+  /**
+   * Method that performs LU decomposition of matrix.
+   *
+   * @param matrix matrix for which decomposition will be performed
+   * @return Array of two matrices:
+   *        - First matrix is lower-triangular matrix L, main diagonal elements equals 1
+   *        - Second matrix is upper-triangular matrix U
+   */
   public static Matrix[] getLuDecomposition(Matrix matrix) {
 
     int[] matrixSize = matrix.getSize();
     double[][] data = matrix.toArray();
 
-    double[][] lowerMatrixData = new double[matrixSize[0]][matrixSize[1] - 1];
+    int lowerColCount = matrixSize[0] != matrixSize[1] ? matrixSize[1] - 1 : matrixSize[1];
+
+    double[][] lowerMatrixData = new double[matrixSize[0]][lowerColCount];
     double[][] upperMatrixData = new double[matrixSize[0]][matrixSize[1]];
 
     double sum;
