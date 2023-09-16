@@ -33,7 +33,6 @@ public class LinearSystemSolverTest {
 
   @Test
   public void solveLuDecompositionTest() {
-    long start = System.currentTimeMillis();
     DenseMatrix matrix = new DenseMatrix("linear_system1.txt");
     LinearSystemSolver solver = new LinearSystemSolver(matrix);
     Matrix result = solver.solve("");
@@ -54,8 +53,6 @@ public class LinearSystemSolverTest {
       assertTrue(
           Math.abs(answer.getElement(0, i) - matrix.getElement(colCount - 1, i)) < 10e-14);
     }
-
-    System.out.println("Test execution time: " + (System.currentTimeMillis() - start) + " ms");
   }
 
   @Test
