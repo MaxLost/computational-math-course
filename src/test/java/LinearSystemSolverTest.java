@@ -7,11 +7,10 @@ import org.junit.Test;
 
 public class LinearSystemSolverTest {
 
-  @Test
-  public void defaultGaussTest() {
+  public void solveLinearSystem(String method) {
     DenseMatrix matrix = new DenseMatrix("linear_system1.txt");
     LinearSystemSolver solver = new LinearSystemSolver(matrix);
-    Matrix result = solver.solve("DG");
+    Matrix result = solver.solve(method);
 
     int rowCount = matrix.getSize()[0];
     int colCount = matrix.getSize()[1];
@@ -29,54 +28,21 @@ public class LinearSystemSolverTest {
       assertTrue(
           Math.abs(answer.getElement(0, i) - matrix.getElement(colCount - 1, i)) < 10e-14);
     }
+  }
+
+  @Test
+  public void defaultGaussTest() {
+    solveLinearSystem("DG");
   }
 
   @Test
   public void improvedGaussTest() {
-    DenseMatrix matrix = new DenseMatrix("linear_system1.txt");
-    LinearSystemSolver solver = new LinearSystemSolver(matrix);
-    Matrix result = solver.solve("IG");
-
-    int rowCount = matrix.getSize()[0];
-    int colCount = matrix.getSize()[1];
-
-    double[][] data = new double[rowCount][colCount - 1];
-    for (int i = 0; i < rowCount; i++) {
-      for (int j = 0; j < colCount - 1; j++) {
-        data[i][j] = matrix.getElement(j, i);
-      }
-    }
-    DenseMatrix matrix1 = new DenseMatrix(rowCount, colCount - 1, data);
-    DenseMatrix answer = (DenseMatrix) matrix1.mul(result);
-
-    for (int i = 0; i < rowCount; i++) {
-      assertTrue(
-          Math.abs(answer.getElement(0, i) - matrix.getElement(colCount - 1, i)) < 10e-14);
-    }
+    solveLinearSystem("IG");
   }
 
   @Test
   public void solveLuDecompositionTest() {
-    DenseMatrix matrix = new DenseMatrix("linear_system1.txt");
-    LinearSystemSolver solver = new LinearSystemSolver(matrix);
-    Matrix result = solver.solve("");
-
-    int rowCount = matrix.getSize()[0];
-    int colCount = matrix.getSize()[1];
-
-    double[][] data = new double[rowCount][colCount - 1];
-    for (int i = 0; i < rowCount; i++) {
-      for (int j = 0; j < colCount - 1; j++) {
-        data[i][j] = matrix.getElement(j, i);
-      }
-    }
-    DenseMatrix matrix1 = new DenseMatrix(rowCount, colCount - 1, data);
-    DenseMatrix answer = (DenseMatrix) matrix1.mul(result);
-
-    for (int i = 0; i < rowCount; i++) {
-      assertTrue(
-          Math.abs(answer.getElement(0, i) - matrix.getElement(colCount - 1, i)) < 10e-14);
-    }
+    solveLinearSystem("LU");
   }
 
   @Test
