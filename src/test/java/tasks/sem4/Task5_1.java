@@ -1,4 +1,4 @@
-package tasks;
+package tasks.sem4;
 
 import org.math.computations.PlanePoint;
 import org.math.computations.Segment;

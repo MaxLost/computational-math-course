@@ -12,8 +12,8 @@ public class SparseMatrix implements Matrix
 {
 
 	private final HashMap<Integer, HashMap<Integer, Double>> data;
-	public final int row_count;
-	public final int col_count;
+	private final int rowCount;
+	private final int colCount;
 	private final int hashCode;
 
 	/**
@@ -30,20 +30,20 @@ public class SparseMatrix implements Matrix
 			}
 
 			if (rows.size() == 0 || rows.get(0).split(" ").length == 0){
-				this.row_count = 0;
-				this.col_count = 0;
+				this.rowCount = 0;
+				this.colCount = 0;
 				this.data = null;
 			}
 			else {
-				this.row_count = rows.size();
-				this.col_count = rows.get(0).split(" ").length;
+				this.rowCount = rows.size();
+				this.colCount = rows.get(0).split(" ").length;
 
 
 				HashMap<Integer, HashMap<Integer, Double>> data = new HashMap<>();
 
-				for (int i = 0; i < this.row_count; i++) {
+				for (int i = 0; i < this.rowCount; i++) {
 					String[] numbers = rows.get(i).split(" ");
-					for (int j = 0; j < this.col_count; j++) {
+					for (int j = 0; j < this.colCount; j++) {
 						double value = Double.parseDouble(numbers[j]);
 						if (Math.abs(value) > EPSILON) {
 							data.computeIfAbsent(i, t -> new HashMap<Integer, Double>());
@@ -61,15 +61,15 @@ public class SparseMatrix implements Matrix
 		}
 	}
 
-	public SparseMatrix (int row_count, int col_count, HashMap<Integer, HashMap<Integer, Double>> data){
+	public SparseMatrix (int rowCount, int colCount, HashMap<Integer, HashMap<Integer, Double>> data){
 		this.data = data;
-		this.row_count = row_count;
-		this.col_count = col_count;
+		this.rowCount = rowCount;
+		this.colCount = colCount;
 		this.hashCode = hashCode();
 	}
 
 	@Override public double getElement(int x, int y) {
-		if (x >= this.col_count | y >= this.row_count){
+		if (x >= this.colCount || y >= this.rowCount){
 			throw new RuntimeException("Invalid coordinates");
 		} else {
 			HashMap<Integer, Double> row = this.data.get(y);
@@ -77,6 +77,11 @@ public class SparseMatrix implements Matrix
 			Double value = row.get(x);
 			return  value == null ? 0 : value;
 		}
+	}
+
+	@Override
+	public int[] getSize() {
+		return new int[]{rowCount, colCount};
 	}
 
 	/**
@@ -100,15 +105,15 @@ public class SparseMatrix implements Matrix
 
 	private Matrix mulDense(DenseMatrix m){
 
-		if (this.col_count == m.rowCount){
-			if (this.row_count == 0 | m.colCount == 0) {
+		if (this.colCount == m.getSize()[0]){
+			if (this.rowCount == 0 || m.getSize()[1] == 0) {
 				return new SparseMatrix(0, 0, null);
 			}
 
 			HashMap<Integer, HashMap<Integer, Double>> data = new HashMap<>();
 
 			for (Map.Entry<Integer, HashMap<Integer, Double>> row: this.data.entrySet()){
-				for (int column = 0; column < m.colCount; column++){
+				for (int column = 0; column < m.getSize()[1]; column++){
 					double sum = 0;
 					for (Map.Entry<Integer, Double> element : row.getValue().entrySet()) {
 						sum += element.getValue() * m.getElement(column, element.getKey());
@@ -119,7 +124,7 @@ public class SparseMatrix implements Matrix
 					}
 				}
 			}
-			return new SparseMatrix(this.row_count, m.colCount, data);
+			return new SparseMatrix(this.rowCount, m.getSize()[1], data);
 
 		} else {
 			throw new RuntimeException("Unable to multiply matrices due to wrong sizes");
@@ -128,8 +133,8 @@ public class SparseMatrix implements Matrix
 
 	private Matrix mulSparse(SparseMatrix m){
 
-		if (this.col_count == m.row_count){
-			if (this.row_count == 0 | m.col_count == 0) {
+		if (this.colCount == m.rowCount){
+			if (this.rowCount == 0 || m.colCount == 0) {
 				return new SparseMatrix(0, 0, null);
 			}
 			HashMap<Integer, HashMap<Integer, Double>> data = new HashMap<>();
@@ -148,7 +153,7 @@ public class SparseMatrix implements Matrix
 					}
 				}
 			}
-			return new SparseMatrix(this.row_count, m.col_count, data);
+			return new SparseMatrix(this.rowCount, m.colCount, data);
 
 		}
 		else {
@@ -170,12 +175,12 @@ public class SparseMatrix implements Matrix
 			SparseMatrix m = (SparseMatrix) ((SparseMatrix) o).transpose();
 			SparseMatrix n = this;
 
-			if (this.col_count == m.col_count) {
-				if (this.row_count == 0 | m.row_count == 0) {
+			if (this.colCount == m.colCount) {
+				if (this.rowCount == 0 || m.rowCount == 0) {
 					return new SparseMatrix(0, 0, null);
 				}
 
-				MulTaskManager task_manager = new MulTaskManager(n.row_count);
+				MulTaskManager task_manager = new MulTaskManager(n.rowCount);
 				ConcurrentHashMap<Integer, HashMap<Integer, Double>> data = new ConcurrentHashMap<>();
 
 				class Multiplicator implements Runnable {
@@ -219,7 +224,7 @@ public class SparseMatrix implements Matrix
 					}
 				}
 
-				return new SparseMatrix(n.row_count, m.row_count, new HashMap<>(data));
+				return new SparseMatrix(n.rowCount, m.rowCount, new HashMap<>(data));
 			}
 			else {
 				throw new RuntimeException("Unable to multiply matrices due to wrong sizes");
@@ -230,7 +235,7 @@ public class SparseMatrix implements Matrix
 	}
 
 	public Matrix transpose() {
-		if (this.row_count == 0 | this.col_count == 0) {
+		if (this.rowCount == 0 || this.colCount == 0) {
 			return this;
 		}
 		else {
@@ -241,8 +246,19 @@ public class SparseMatrix implements Matrix
 					data.get(j).put(i, this.getElement(j, i));
 				}
 			}
-			return new SparseMatrix(this.col_count, this.row_count, data);
+			return new SparseMatrix(this.colCount, this.rowCount, data);
 		}
+	}
+
+	@Override
+	public double[][] toArray() {
+		double[][] result = new double[rowCount][colCount];
+		for (int i = 0; i < rowCount; i++) {
+			for (int j = 0; j < colCount; j++) {
+				result[i][j] = this.getElement(j, i);
+			}
+		}
+		return result;
 	}
 
 	@Override public int hashCode(){
@@ -250,12 +266,12 @@ public class SparseMatrix implements Matrix
 		String caller = String.valueOf( (new Throwable().getStackTrace())[1] );
 		if (caller.equals("SparseMatrix")) {
 
-			if (this.row_count == 0 | this.col_count == 0) {
+			if (this.rowCount == 0 | this.colCount == 0) {
 				return 0;
 			}
 
 			int a = 0, b = 0;
-			for (int i = 0; i < this.col_count; i++){
+			for (int i = 0; i < this.colCount; i++){
 				HashMap<Integer, Double> row = this.data.get(i);
 				if (row != null) {
 
@@ -289,14 +305,14 @@ public class SparseMatrix implements Matrix
 
 	private boolean equalsDense(DenseMatrix o) {
 
-		if (this.row_count != o.rowCount | this.col_count != o.colCount) {
+		if (this.rowCount != o.getSize()[0] || this.colCount != o.getSize()[1]) {
 			return false;
 		}
 
-		if (this.row_count == 0 | this.col_count == 0) { return true; }
+		if (this.rowCount == 0 || this.colCount == 0) { return true; }
 
-		for (int i = 0; i < this.row_count; i++){
-			for (int j = 0; j < this.col_count; j++) {
+		for (int i = 0; i < this.rowCount; i++){
+			for (int j = 0; j < this.colCount; j++) {
 				if (Math.abs(Math.abs(o.getElement(j, i)) - Math.abs(this.getElement(j, i))) > EPSILON) {
 					return false;
 				}
@@ -308,16 +324,16 @@ public class SparseMatrix implements Matrix
 
 	private boolean equalsSparse(SparseMatrix o) {
 
-		if (this.row_count != o.row_count | this.col_count != o.col_count) {
+		if (this.rowCount != o.rowCount | this.colCount != o.colCount) {
 			return false;
 		}
 
 		if (this.hashCode() == o.hashCode()) {
 
-			if (this.row_count == 0 | this.col_count == 0) { return true; }
+			if (this.rowCount == 0 || this.colCount == 0) { return true; }
 
-			for (int i = 0; i < this.row_count; i++){
-				for (int j = 0; j < this.col_count; j++) {
+			for (int i = 0; i < this.rowCount; i++){
+				for (int j = 0; j < this.colCount; j++) {
 					if (Math.abs(Math.abs(o.getElement(j, i)) - Math.abs(this.getElement(j, i))) > EPSILON) {
 						return false;
 					}
@@ -332,8 +348,8 @@ public class SparseMatrix implements Matrix
 	@Override public String toString() {
 
 		StringBuilder str = new StringBuilder();
-		for (int i = 0; i < this.row_count; i++) {
-			for (int j = 0; j < this.col_count; j++) {
+		for (int i = 0; i < this.rowCount; i++) {
+			for (int j = 0; j < this.colCount; j++) {
 				str.append(this.getElement(j, i)).append(" ");
 			}
 			str.append("\n");

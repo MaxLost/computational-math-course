@@ -1,4 +1,4 @@
-package tasks;
+package tasks.sem4;
 
 import org.math.computations.PlanePoint;
 import org.math.computations.Polynomial;
@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import tasks.Utils;
 
 public class Task3_1 {
 

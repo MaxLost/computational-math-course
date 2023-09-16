@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.math.computations.matrices.*;
 import static org.junit.Assert.*;
+import static org.math.computations.matrices.Decomposer.getLuDecomposition;
 
 public class MatrixTest
 {
@@ -156,10 +157,10 @@ public class MatrixTest
 	@Test
 	public void equalsSSTest(){
 		HashMap<Integer, HashMap<Integer, Double>> data = new HashMap<>();
-		data.put(0, new HashMap<Integer, Double>());
+		data.put(0, new HashMap<>());
 		data.get(0).put(0, 2.0);
 		data.get(0).put(2, -1.0);
-		data.put(1, new HashMap<Integer, Double>());
+		data.put(1, new HashMap<>());
 		data.get(1).put(1, 5.0);
 		Matrix m1 = new SparseMatrix(3, 3, data);
 		Matrix m2 = new SparseMatrix(3, 3, data);
@@ -170,11 +171,10 @@ public class MatrixTest
 	@Test
 	public void loadSparseMatrix(){
 		Matrix m = new SparseMatrix("sparse_test/load.txt");
-		// System.out.println(((SparseMatrix) m).data.get(0));
 		HashMap<Integer, HashMap<Integer, Double>> data = new HashMap<>();
-		data.put(1, new HashMap<Integer, Double>());
+		data.put(1, new HashMap<>());
 		data.get(1).put(1, 5.0);
-		data.put(2, new HashMap<Integer, Double>());
+		data.put(2, new HashMap<>());
 		data.get(2).put(2, -3.0);
 		Matrix expected = new SparseMatrix(3, 3, data);
 
@@ -297,20 +297,42 @@ public class MatrixTest
 	}
 
 	@Test
-	public void linearSystemSolverTest() {
+	public void linearSolverTest() {
 		double[][] a = {{1.0, 4.0, 0.0}, {0.0, 3.0, -2.0}, {-5.0, 1.0, 1.0}};
 		DenseMatrix A = new DenseMatrix(3, 3, a);
 
 		double[][] b = {{1}, {0}, {-3}};
 		DenseMatrix B = new DenseMatrix(3, 1, b);
 
-		LinearSystemSolver task = new LinearSystemSolver(A, B);
+		LinearSolver task = new LinearSolver(A, B);
 		List<Double> expected = Arrays.asList(0.6444444444444, 0.08888888888888, 0.1333333333333);
 		List<Double> result = task.solve();
 
 		for (int i = 0; i < 3; i++) {
 			assertTrue(Math.abs(expected.get(i) - result.get(i)) < 10e-10);
 		}
+	}
+
+	@Test
+	public void luDecompositionTest() {
+
+		DenseMatrix matrix = new DenseMatrix("dense_test/3x3.txt");
+		Matrix[] decomposed = getLuDecomposition(matrix);
+		Matrix result = decomposed[0].mul(decomposed[1]);
+
+		assertEquals(matrix, result);
+	}
+
+	@Test
+	public void inversionTest() {
+
+		DenseMatrix matrix = new DenseMatrix("dense_test/3x3.txt");
+		Matrix inverted = matrix.invert();
+		Matrix result = matrix.mul(inverted);
+
+		DenseMatrix expected = new DenseMatrix(3, 3, new double[][]{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}});
+
+		assertEquals(expected, result);
 	}
 
 	/*
