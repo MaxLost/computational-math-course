@@ -8,7 +8,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-
+/**
+ * Class that provides dense matrices and operations with them.
+ */
 public class DenseMatrix implements Matrix {
 
   private final double[][] data;
@@ -17,7 +19,7 @@ public class DenseMatrix implements Matrix {
   private final int hashCode;
 
   /**
-   * Loads dense matrix from file
+   * Loads dense matrix from file.
    *
    * @param fileName - name of file with matrix data
    */
@@ -88,8 +90,8 @@ public class DenseMatrix implements Matrix {
   }
 
   /**
-   * Single-thread matrix multiplication
-   * <p>
+   * Single-thread matrix multiplication.
+   * <br>
    * (1) A@B = C
    *
    * @param o - B matrix in (1)
@@ -145,8 +147,8 @@ public class DenseMatrix implements Matrix {
   }
 
   /**
-   * Multi-thread matrix multiplication
-   * <p>
+   * Multi-thread matrix multiplication.
+   * <br>
    * (1) A@B = C
    *
    * @param o - B matrix in (1)
@@ -238,6 +240,11 @@ public class DenseMatrix implements Matrix {
     }
   }
 
+  /**
+   * Method for finding inverse matrix for square matrices.
+   *
+   * @return inverse matrix for given matrix
+   */
   public Matrix invert() {
 
     if (this.colCount != this.rowCount) {
@@ -281,9 +288,7 @@ public class DenseMatrix implements Matrix {
 
       double[][] result = new double[rowCount][colCount];
       for (int i = 0; i < rowCount; i++) {
-        for (int j = 0; j < colCount; j++) {
-          result[i][j] = upperMatrixData[i][colCount + j];
-        }
+        System.arraycopy(upperMatrixData[i], colCount, result[i], 0, colCount);
       }
 
       return new DenseMatrix(rowCount, colCount, result);
@@ -322,7 +327,7 @@ public class DenseMatrix implements Matrix {
   }
 
   /**
-   * Compares various types of matrices
+   * Compares various types of matrices.
    *
    * @param o - Object with which this matrix will be compared
    * @return - true if objects equals, false if not
