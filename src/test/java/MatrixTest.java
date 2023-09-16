@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.math.computations.matrices.*;
 import static org.junit.Assert.*;
+import static org.math.computations.matrices.Decomposer.getLuDecomposition;
 
 public class MatrixTest
 {
@@ -311,6 +312,16 @@ public class MatrixTest
 		for (int i = 0; i < 3; i++) {
 			assertTrue(Math.abs(expected.get(i) - result.get(i)) < 10e-10);
 		}
+	}
+
+	@Test
+	public void luDecompositionTest() {
+
+		DenseMatrix matrix = new DenseMatrix("dense_test/3x3.txt");
+		Matrix[] decomposed = getLuDecomposition(matrix);
+		Matrix result = decomposed[0].mul(decomposed[1]);
+
+		assertEquals(matrix, result);
 	}
 
 	/*
