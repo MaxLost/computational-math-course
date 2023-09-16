@@ -1,7 +1,5 @@
 package org.math.computations.matrices;
 
-import java.util.Arrays;
-
 /**
  * Class for finding unique solution X for linear system of equations: A @ X = B.
  */
