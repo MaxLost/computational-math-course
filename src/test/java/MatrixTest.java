@@ -323,6 +323,18 @@ public class MatrixTest
 		assertEquals(matrix, result);
 	}
 
+	@Test
+	public void inversionTest() {
+
+		DenseMatrix matrix = new DenseMatrix("dense_test/3x3.txt");
+		Matrix inverted = matrix.invert();
+		Matrix result = matrix.mul(inverted);
+
+		DenseMatrix expected = new DenseMatrix(3, 3, new double[][]{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}});
+
+		assertEquals(expected, result);
+	}
+
 	/*
 	@Test
 	public void perfomance(){

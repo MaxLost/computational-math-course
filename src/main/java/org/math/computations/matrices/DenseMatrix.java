@@ -207,6 +207,7 @@ public class DenseMatrix implements Matrix {
   }
 
   public double det() {
+
     if (this.colCount != this.rowCount) {
       throw new RuntimeException("Cannot compute determinant for non-square matrix");
     } else {
@@ -223,6 +224,7 @@ public class DenseMatrix implements Matrix {
   }
 
   public Matrix transpose() {
+
     if (this.rowCount == 0 || this.colCount == 0) {
       return this;
     } else {
@@ -233,6 +235,58 @@ public class DenseMatrix implements Matrix {
         }
       }
       return new DenseMatrix(this.colCount, this.rowCount, result);
+    }
+  }
+
+  public Matrix invert() {
+
+    if (this.colCount != this.rowCount) {
+
+      throw new RuntimeException("Finding of inverse matrix is unable for non-square matrices");
+
+    } else if (Math.abs(this.det()) < 10e-12) {
+
+      throw new RuntimeException("Unable to find inverse matrix for singular matrices");
+
+    } else {
+
+      double[][] matrixData = new double[this.rowCount][this.colCount * 2];
+
+      for (int i = 0; i < rowCount; i++) {
+        for (int j = 0; j < colCount; j++) {
+          matrixData[i][j] = this.getElement(j, i);
+        }
+
+        matrixData[i][colCount + i] = 1;
+      }
+
+      Matrix[] decomposed = getLuDecomposition(new DenseMatrix(rowCount, colCount * 2, matrixData));
+      int[] upperMatrixSize = decomposed[1].getSize();
+      double[][] upperMatrixData = decomposed[1].toArray();
+
+      for (int i = upperMatrixSize[0] - 1; i >= 0; i--) {
+
+        for (int j = upperMatrixSize[1] - 1; j >= 0; j--) {
+          upperMatrixData[i][j] = upperMatrixData[i][j] / upperMatrixData[i][i];
+        }
+
+        for (int j = i - 1; j >= 0; j--) {
+
+          double c = upperMatrixData[j][i] / upperMatrixData[i][i];
+          for (int k = upperMatrixSize[1] - 1; k >= 0; k--) {
+            upperMatrixData[j][k] = upperMatrixData[j][k] - upperMatrixData[i][k] * c;
+          }
+        }
+      }
+
+      double[][] result = new double[rowCount][colCount];
+      for (int i = 0; i < rowCount; i++) {
+        for (int j = 0; j < colCount; j++) {
+          result[i][j] = upperMatrixData[i][colCount + j];
+        }
+      }
+
+      return new DenseMatrix(rowCount, colCount, result);
     }
   }
 
