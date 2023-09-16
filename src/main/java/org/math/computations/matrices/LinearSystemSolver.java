@@ -1,5 +1,7 @@
 package org.math.computations.matrices;
 
+import java.util.Arrays;
+
 /**
  * Class for finding unique solution X for linear system of equations: A @ X = B.
  */
@@ -19,9 +21,37 @@ public class LinearSystemSolver {
   }
 
   /**
+   * Method for getting augmented matrix of a system A @ X = B.
+   * Where A - N x N, B - N x 1, X - N x 1
+   *
+   * @param matrixA matrix A from system denoted above
+   * @param b vector B from system denoted above
+   *
+   * @return augmented matrix of a system A @ X = B
+   */
+  public static Matrix getAugmentedMatrix(Matrix matrixA, Matrix b) {
+
+    int[] matrixSize = matrixA.getSize();
+    double[][] data = new double[matrixSize[0]][matrixSize[1] + 1];
+
+    for (int i = 0; i < matrixSize[0]; i++) {
+      for (int j = 0; j < matrixSize[1]; j++) {
+        data[i][j] = matrixA.getElement(j, i);
+      }
+
+      data[i][matrixSize[1]] = b.getElement(0, i);
+    }
+
+    return new DenseMatrix(matrixSize[0], matrixSize[1] + 1, data);
+  }
+
+  /**
    * Finds unique solution of linear system: A @ X = B.
    *
-   * @param method method of solving system
+   * @param method method of solving system: <br>
+   *               - Default method: LU decomposition <br>
+   *               - DG: Gauss elimination <br>
+   *               - IG: Gauss elimination with selection of leading element <br>
    *
    * @return solution as vector
    */
@@ -58,6 +88,45 @@ public class LinearSystemSolver {
       }
     }
 
+    double[][] finalData = doGaussBackwardElimination(data);
+
+    if (isSmallLeadingElement) {
+      throw new RuntimeException("Result may be incorrect due to small leading elements");
+    }
+
+    return new DenseMatrix(matrixSize[0], 1, extractLastColumn(finalData));
+  }
+
+  private Matrix solveImprovedGauss() {
+    return null;
+  }
+
+  private Matrix solveLuDecomposition() {
+
+    Matrix[] decomposed = Decomposer.getLuDecomposition(augmentedMatrix);
+
+    double[][] upperMatrix = decomposed[1].toArray();
+    int[] matrixSize = new int[]{upperMatrix.length, upperMatrix[0].length};
+
+    double[][] data = doGaussBackwardElimination(upperMatrix);
+
+    return new DenseMatrix(matrixSize[0], 1, extractLastColumn(data));
+  }
+
+  private static double[][] extractLastColumn(double[][] data) {
+
+    double[][] result = new double[data.length][1];
+    for (int i = 0; i < data.length; i++) {
+      result[i][0] = data[i][data[0].length - 1];
+    }
+
+    return result;
+  }
+
+  private static double[][] doGaussBackwardElimination(double[][] data) {
+
+    int[] matrixSize = new int[]{data.length, data[0].length};
+
     for (int i = matrixSize[0] - 1; i >= 0; i--) {
 
       for (int j = matrixSize[0]; j >= 0; j--) {
@@ -73,24 +142,7 @@ public class LinearSystemSolver {
       }
     }
 
-    if (isSmallLeadingElement) {
-      throw new RuntimeException("Result may be incorrect due to small leading elements");
-    }
-
-    double[][] result = new double[matrixSize[0]][1];
-    for (int i = 0; i < matrixSize[0]; i++) {
-      result[i][0] = data[i][matrixSize[1] - 1];
-    }
-
-    return new DenseMatrix(matrixSize[0], 1, result);
-  }
-
-  private Matrix solveImprovedGauss() {
-    return null;
-  }
-
-  private Matrix solveLuDecomposition() {
-    return null;
+    return data;
   }
 
 }
