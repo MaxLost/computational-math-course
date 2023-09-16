@@ -157,10 +157,10 @@ public class MatrixTest
 	@Test
 	public void equalsSSTest(){
 		HashMap<Integer, HashMap<Integer, Double>> data = new HashMap<>();
-		data.put(0, new HashMap<Integer, Double>());
+		data.put(0, new HashMap<>());
 		data.get(0).put(0, 2.0);
 		data.get(0).put(2, -1.0);
-		data.put(1, new HashMap<Integer, Double>());
+		data.put(1, new HashMap<>());
 		data.get(1).put(1, 5.0);
 		Matrix m1 = new SparseMatrix(3, 3, data);
 		Matrix m2 = new SparseMatrix(3, 3, data);
@@ -171,11 +171,10 @@ public class MatrixTest
 	@Test
 	public void loadSparseMatrix(){
 		Matrix m = new SparseMatrix("sparse_test/load.txt");
-		// System.out.println(((SparseMatrix) m).data.get(0));
 		HashMap<Integer, HashMap<Integer, Double>> data = new HashMap<>();
-		data.put(1, new HashMap<Integer, Double>());
+		data.put(1, new HashMap<>());
 		data.get(1).put(1, 5.0);
-		data.put(2, new HashMap<Integer, Double>());
+		data.put(2, new HashMap<>());
 		data.get(2).put(2, -3.0);
 		Matrix expected = new SparseMatrix(3, 3, data);
 
