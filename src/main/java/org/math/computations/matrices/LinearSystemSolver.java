@@ -96,7 +96,37 @@ public class LinearSystemSolver {
   }
 
   private Matrix solveImprovedGauss() {
-    return null;
+
+    int[] matrixSize = augmentedMatrix.getSize();
+    double[][] data = augmentedMatrix.toArray();
+
+    for (int i = 0; i < matrixSize[1] - 1; i++) {
+
+      int leadingElementRow = i;
+      for (int j = i; j < matrixSize[0]; j++) {
+
+        if (Math.abs(data[j][i]) > Math.abs(data[leadingElementRow][i])) {
+          leadingElementRow = j;
+        }
+      }
+
+      double[] temp = data[i];
+      data[i] = data[leadingElementRow];
+      data[leadingElementRow] = temp;
+
+      for (int j = i + 1; j < matrixSize[0]; j++) {
+
+        double c = data[j][i] / data[i][i];
+        for (int k = i; k < matrixSize[1]; k++) {
+
+          data[j][k] = data[j][k] - data[i][k] * c;
+        }
+      }
+    }
+
+    double[][] finalData = doGaussBackwardElimination(data);
+
+    return new DenseMatrix(matrixSize[0], 1, extractLastColumn(finalData));
   }
 
   private Matrix solveLuDecomposition() {
