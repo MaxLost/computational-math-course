@@ -20,7 +20,7 @@ public class Decomposer {
     int[] matrixSize = matrix.getSize();
     double[][] data = matrix.toArray();
 
-    int lowerColCount = matrixSize[0] != matrixSize[1] ? matrixSize[1] - 1 : matrixSize[1];
+    int lowerColCount = matrixSize[0] != matrixSize[1] ? matrixSize[0] : matrixSize[1];
 
     double[][] lowerMatrixData = new double[matrixSize[0]][lowerColCount];
     double[][] upperMatrixData = new double[matrixSize[0]][matrixSize[1]];
