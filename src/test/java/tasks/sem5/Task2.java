@@ -12,7 +12,7 @@ public class Task2 {
     DenseMatrix matrixA = new DenseMatrix("linear_system_solver/linear_system2_A.txt");
     DenseMatrix b = new DenseMatrix("linear_system_solver/linear_system2_b.txt");
     Matrix system = LinearSystemSolver.getAugmentedMatrix(matrixA, b);
-    System.out.println("Matrix of a system:\n" + system);
+    System.out.println("Original matrix of a system:\n" + system);
 
     LinearSystemSolver solver = new LinearSystemSolver(system);
     Matrix expected = solver.solve("IG");
@@ -21,6 +21,8 @@ public class Task2 {
     Matrix[] transformedSystem = LinearSystemSolver.transformSystem(system);
     Matrix matrixH = transformedSystem[0];
     Matrix matrixG = transformedSystem[1];
+    Matrix newSystem = LinearSystemSolver.getAugmentedMatrix(matrixH, matrixG);
+    System.out.println("Transformed matrix of a system:\n" + newSystem);
 
     double meanH = LinearSystemSolver.mean(matrixH);
     System.out.println("Mean of H = " + meanH);
@@ -28,8 +30,7 @@ public class Task2 {
     double priorEstimation = Math.pow(meanH, 7) * meanG / (1 - meanH);
     System.out.println("Prior estimation for || x^(7) - x || <= " + priorEstimation);
 
-    LinearSystemSolver transformedSolver = new LinearSystemSolver(
-        LinearSystemSolver.getAugmentedMatrix(matrixH, matrixG));
+    LinearSystemSolver transformedSolver = new LinearSystemSolver(newSystem);
 
     Matrix x = transformedSolver.solveIterative("SI", 7);
     System.out.println("\nSolution via simple iteration method:\n" + x + "\nDifference between solutions:\n"
