@@ -30,5 +30,9 @@ public interface Matrix {
    */
   Matrix dmul(Matrix o);
 
+  Matrix add(Matrix o);
+
+  Matrix scalarMultiply(double n);
+
   double[][] toArray();
 }

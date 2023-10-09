@@ -208,6 +208,38 @@ public class DenseMatrix implements Matrix {
     }
   }
 
+  @Override
+  public Matrix add(Matrix o) {
+
+    int[] matrixSize = o.getSize();
+
+    if (this.rowCount != matrixSize[0] || this.colCount != matrixSize[1]) {
+      throw new RuntimeException("Addition supported only for matrices with equal sizes.");
+    }
+
+    double[][] matrixA = this.toArray();
+
+    for (int i = 0; i < matrixSize[0]; i++) {
+      for (int j = 0; j < matrixSize[1]; j++) {
+        matrixA[i][j] += o.getElement(j, i);
+      }
+    }
+
+    return new DenseMatrix(matrixSize[0], matrixSize[1], matrixA);
+  }
+
+  @Override
+  public Matrix scalarMultiply(double n) {
+
+    double[][] matrixA = this.toArray();
+    for (int i = 0; i < rowCount; i++) {
+      for (int j = 0; j < colCount; j++) {
+        matrixA[i][j] *= n;
+      }
+    }
+
+    return new DenseMatrix(rowCount, colCount, matrixA);
+  }
   public double det() {
 
     if (this.colCount != this.rowCount) {
