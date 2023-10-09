@@ -62,6 +62,151 @@ public class LinearSystemSolver {
     };
   }
 
+  public Matrix solveIterative(String method, int approximation) {
+
+    return switch (method) {
+      case "SE" -> solveSeidelMethod(approximation);
+      case "SET" -> solveSeidelMethodWithTransformation(approximation);
+      case "RE" -> solveRelaxation(approximation);
+      case "RET" -> solveRelaxationWithTransformation(approximation);
+      case "SI" -> solveSimpleIteration(approximation);
+      default -> solveSimpleIterationWithTransformation(approximation);
+    };
+  }
+
+  private Matrix solveSimpleIteration(Matrix system, int approximation) {
+
+    double[][][] data = deAugmentMatrix(system);
+
+    Matrix matrixH = new DenseMatrix(data[0].length, data[0][0].length, data[0]);
+    Matrix matrixG = new DenseMatrix(data[1].length, data[1][0].length, data[1]);
+
+    double meanH = mean(matrixH);
+    if (meanH > 1) {
+      System.out.println("Simple iteration algorithm might not converge for this system.\n");
+    }
+
+    Matrix x = new DenseMatrix(data[1].length, 1, new double[data[1].length][1]);
+    Matrix prevX = x;
+    for (int i = 0; i < approximation; i++) {
+      prevX = x;
+      x = matrixH.mul(x).add(matrixG);
+    }
+
+    double postEstimation = meanH * mean(x.add(prevX.scalarMultiply(-1))) / (1 - meanH);
+    System.out.println("Post estimation for || x^(7) - x || <= " + postEstimation + "\n");
+
+    return x;
+  }
+
+  private Matrix solveSimpleIteration(int approximation) {
+
+    return solveSimpleIteration(this.augmentedMatrix, approximation);
+  }
+
+  private Matrix solveSimpleIterationWithTransformation(int approximation) {
+
+    Matrix[] transformedSystem = transformSystem(this.augmentedMatrix);
+    Matrix system = getAugmentedMatrix(transformedSystem[0], transformedSystem[1]);
+
+    return solveSimpleIteration(system, approximation);
+  }
+
+  private static Matrix solveSeidelMethod(Matrix system, int approximation) {
+
+    int[] matrixSize = system.getSize();
+    matrixSize[1]--;
+
+    double[][] dataL = new double[matrixSize[0]][matrixSize[1]];
+    double[][] dataR = new double[matrixSize[0]][matrixSize[1]];
+    double[][] dataE = new double[matrixSize[0]][matrixSize[1]];
+
+    for (int i = 0; i < matrixSize[0]; i++) {
+      for (int j = 0; j < i; j++) {
+        dataL[i][j] = system.getElement(j, i);
+      }
+      for (int j = i; j < matrixSize[1]; j++) {
+        dataR[i][j] = system.getElement(j, i);
+      }
+      dataE[i][i] = 1;
+    }
+
+    Matrix matrixB = new DenseMatrix(matrixSize[0], 1, extractLastColumn(system.toArray()));
+    Matrix matrixL = new DenseMatrix(matrixSize[0], matrixSize[1], dataL);
+    Matrix matrixR = new DenseMatrix(matrixSize[0], matrixSize[1], dataR);
+    Matrix matrixE = new DenseMatrix(matrixSize[0], matrixSize[1], dataE);
+    Matrix matrixT = ((DenseMatrix) matrixE.add(matrixL.scalarMultiply(-1))).invert();
+    Matrix matrixH = matrixT.mul(matrixR);
+    Matrix matrixG = matrixT.mul(matrixB);
+
+    double meanH = mean(matrixH);
+    if (meanH > 1) {
+      System.out.println("Seidel's algorithm might not converge for this system.\n");
+    }
+
+    Matrix x = new DenseMatrix(matrixSize[0], 1, new double[matrixSize[0]][1]);
+    for (int i = 0; i < approximation; i++) {
+      x = matrixH.mul(x).add(matrixG);
+    }
+
+    return x;
+  }
+
+  private Matrix solveSeidelMethod(int approximation) {
+
+    return solveSeidelMethod(this.augmentedMatrix, approximation);
+  }
+
+  private Matrix solveSeidelMethodWithTransformation(int approximation) {
+
+    Matrix[] transformedSystem = transformSystem(this.augmentedMatrix);
+    Matrix system = getAugmentedMatrix(transformedSystem[0], transformedSystem[1]);
+
+    return solveSeidelMethod(system, approximation);
+  }
+
+  private Matrix solveRelaxation(Matrix system, int approximation) {
+
+    double[][][] data = deAugmentMatrix(system);
+    int[] matrixSize = new int[] {data[0].length, data[0][0].length};
+
+    double[][] dataH = data[0];
+    double[][] dataG = data[1];
+    double q = 1;
+
+    double[][] x = new double[matrixSize[0]][1];
+    for (int k = 0; k < approximation; k++) {
+      for (int i = 0; i < matrixSize[0]; i++) {
+
+        double sumCurrent = 0;
+        for (int j = 0; j < i; j++) {
+          sumCurrent += dataH[i][j] * x[j][0];
+        }
+
+        double sumPrevious = 0;
+        for (int j = i + 1; j < matrixSize[1]; j++) {
+          sumPrevious += dataH[i][j] * x[j][0];
+        }
+
+        x[i][0] = x[i][0] + q * (sumCurrent + sumPrevious - x[i][0] + dataG[i][0]);
+      }
+    }
+
+    return new DenseMatrix(matrixSize[0], 1, x);
+  }
+
+  private Matrix solveRelaxation(int approximation) {
+    return solveRelaxation(this.augmentedMatrix, approximation);
+  }
+
+  private Matrix solveRelaxationWithTransformation(int approximation) {
+
+    Matrix[] transformedSystem = transformSystem(this.augmentedMatrix);
+    Matrix system = getAugmentedMatrix(transformedSystem[0], transformedSystem[1]);
+
+    return solveRelaxation(system, approximation);
+  }
+
   private Matrix solveDefaultGauss() {
 
     int[] matrixSize = augmentedMatrix.getSize();
@@ -171,6 +316,70 @@ public class LinearSystemSolver {
     }
 
     return data;
+  }
+
+  private static double[][][] deAugmentMatrix(Matrix m) {
+
+    int[] augmentedSize = m.getSize();
+    double[][] matrixA = new double[augmentedSize[0]][augmentedSize[1] - 1];
+    double[][] b = new double[augmentedSize[0]][1];
+
+    for (int i = 0; i < augmentedSize[0]; i++) {
+
+      for (int j = 0; j < augmentedSize[1] - 1; j++) {
+        matrixA[i][j] = m.getElement(j, i);
+      }
+
+      b[i][0] = m.getElement(augmentedSize[1] - 1, i);
+    }
+
+    return new double[][][]{matrixA, b};
+  }
+
+  private double[][][] deAugmentMatrix() {
+
+    return deAugmentMatrix(this.augmentedMatrix);
+  }
+
+  public static Matrix[] transformSystem(Matrix system) {
+
+    double[][][] data = deAugmentMatrix(system);
+    Matrix matrixA = new DenseMatrix(data[0].length, data[0][0].length, data[0]);
+    Matrix matrixB = new DenseMatrix(data[1].length, data[1][0].length, data[1]);
+
+    int[] matrixSize = matrixA.getSize();
+
+    double[][] dataE = new double[matrixSize[0]][matrixSize[1]];
+    double[][] dataD = new double[matrixSize[0]][matrixSize[1]];
+    for (int i = 0; i < matrixSize[0]; i++) {
+      dataE[i][i] = 1;
+      dataD[i][i] = matrixA.getElement(i, i);
+    }
+
+    Matrix inverseD = new DenseMatrix(dataD.length, dataD[0].length, dataD).invert();
+    Matrix matrixH = new DenseMatrix(dataE.length, dataE[0].length, dataE).add(
+        inverseD.mul(matrixA).scalarMultiply(-1));
+
+    Matrix matrixG = inverseD.mul(matrixB);
+
+    return new Matrix[] {matrixH, matrixG};
+  }
+
+  public static double mean(Matrix m) {
+
+    double mean = 0;
+    int[] matrixSize = m.getSize();
+    for (int i = 0; i < matrixSize[0]; i++) {
+
+      double sum = 0;
+      for (int j = 0; j < matrixSize[1]; j++) {
+        sum += Math.abs(m.getElement(j, i));
+      }
+
+      mean = Math.max(mean, sum);
+    }
+
+    return mean;
   }
 
 }
