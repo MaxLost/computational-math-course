@@ -172,7 +172,7 @@ public class LinearSystemSolver {
 
     double[][] dataH = data[0];
     double[][] dataG = data[1];
-    double q = 1;
+    double q = 1.01264;
 
     double[][] x = new double[matrixSize[0]][1];
     for (int k = 0; k < approximation; k++) {
