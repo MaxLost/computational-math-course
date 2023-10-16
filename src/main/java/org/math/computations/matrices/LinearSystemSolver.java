@@ -1,5 +1,7 @@
 package org.math.computations.matrices;
 
+import java.util.Arrays;
+
 /**
  * Class for finding unique solution X for linear system of equations: A @ X = B.
  */
@@ -94,7 +96,8 @@ public class LinearSystemSolver {
     }
 
     double postEstimation = meanH * mean(x.add(prevX.scalarMultiply(-1))) / (1 - meanH);
-    System.out.println("Post estimation for || x^(7) - x || <= " + postEstimation + "\n");
+    System.out.println(
+        "Post estimation for simple iteration method: || x^(7) - x || <= " + postEstimation + "\n");
 
     return x;
   }
@@ -145,9 +148,14 @@ public class LinearSystemSolver {
     }
 
     Matrix x = new DenseMatrix(matrixSize[0], 1, new double[matrixSize[0]][1]);
+    Matrix prevX = x;
     for (int i = 0; i < approximation; i++) {
+      prevX = x;
       x = matrixH.mul(x).add(matrixG);
     }
+
+    double postEstimation = mean(matrixR) * mean(x.add(prevX.scalarMultiply(-1))) / (1 - meanH);
+    System.out.println("Post estimation for Seidel method: || x^(7) - x || <= " + postEstimation);
 
     return x;
   }
@@ -174,8 +182,20 @@ public class LinearSystemSolver {
     double[][] dataG = data[1];
     double q = 1.01264;
 
+    Matrix matrixH = new DenseMatrix(matrixSize[0], matrixSize[1], dataH);
+    double meanH = mean(matrixH);
+    if (meanH > 1) {
+      System.out.println("Upper relaxation method might not converge for this system.\n");
+    }
+
     double[][] x = new double[matrixSize[0]][1];
+    double[][] prevX = new double[matrixSize[0]][1];
     for (int k = 0; k < approximation; k++) {
+
+      for (int i = 0; i < matrixSize[0]; i++) {
+        prevX[i][0] = x[i][0];
+      }
+
       for (int i = 0; i < matrixSize[0]; i++) {
 
         double sumCurrent = 0;
@@ -192,7 +212,13 @@ public class LinearSystemSolver {
       }
     }
 
-    return new DenseMatrix(matrixSize[0], 1, x);
+    Matrix matrixX = new DenseMatrix(matrixSize[0], 1, x);
+    Matrix matrixPrevX = new DenseMatrix(matrixSize[0], 1, prevX);
+
+    double postEstimation = mean(matrixH) * mean(matrixX.add(matrixPrevX.scalarMultiply(-1))) / (1 - meanH);
+    System.out.println("Post estimation for upper relaxation method: || x^(7) - x || <= " + postEstimation);
+
+    return matrixX;
   }
 
   private Matrix solveRelaxation(int approximation) {

@@ -24,11 +24,6 @@ public class Task1 {
 
   public static void main(String[] args) {
 
-    /*try (Scanner input = new Scanner(System.in)) {
-
-
-    }*/
-
     DenseMatrix matrixA = new DenseMatrix("linear_system_solver/linear_system3_A.txt");
     DenseMatrix b = new DenseMatrix("linear_system_solver/linear_system3_b.txt");
 
