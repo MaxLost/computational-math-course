@@ -104,34 +104,50 @@ public class EigenvalueProblemSolver {
             dataY[i][0] = random.nextDouble();
         }
         Matrix vectorY = new DenseMatrix(matrixSize[0], 1, dataY);
-        vectorY = normalizeEuclidean(vectorY);
 
         double postEstimation = Double.MAX_VALUE;
         double eigenvalue = 0;
         while (postEstimation > precision) {
 
-            Matrix prevY = vectorY.copy();
+            vectorY = normalizeVector(vectorY);
             vectorY = matrixA.mul(vectorY);
-            vectorY = normalizeEuclidean(vectorY);
-            eigenvalue = vectorY.getElement(0, 0);
+            eigenvalue = getMaxAbsElementOfVector(vectorY);
 
             postEstimation = Utils.euclideanMean(
                 matrixA.mul(vectorY).add(vectorY.scalarMultiply(-1 * eigenvalue)))
                 / Utils.euclideanMean(vectorY);
-
-            //System.out.println(postEstimation);
         }
 
         double[][] data = new double[1][1];
         data[0][0] = eigenvalue;
 
-        return List.of(new DenseMatrix(1, 1, data), vectorY);
+        return List.of(new DenseMatrix(1, 1, data), normalizeEuclidean(vectorY));
     }
 
     private static Matrix normalizeEuclidean(Matrix matrixA) {
 
         double mean = Utils.euclideanMean(matrixA);
         return matrixA.scalarMultiply(1 / mean);
+    }
+
+    private static Matrix normalizeVector(Matrix vector) {
+
+        double maxElement = getMaxAbsElementOfVector(vector);
+
+        return vector.scalarMultiply(1 / maxElement);
+    }
+
+    private static double getMaxAbsElementOfVector(Matrix vector) {
+        int[] matrixSize = vector.getSize();
+
+        int maxElementId = 0;
+        for (int i = 0; i < matrixSize[0]; i++) {
+            if (Math.abs(vector.getElement(0, i)) > vector.getElement(0, maxElementId)) {
+                maxElementId = i;
+            }
+        }
+
+        return vector.getElement(0, maxElementId);
     }
 
 }

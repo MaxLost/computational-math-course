@@ -26,4 +26,17 @@ public class Utils {
 
         return mean;
     }
+
+    public static double vectorMaxMean(Matrix vector) {
+
+        int[] matrixSize = vector.getSize();
+        double[][] data = vector.toArray();
+        double mean = 0;
+
+        for (int i = 0; i < matrixSize[0]; i++) {
+            mean = Math.max(mean, Math.abs(data[i][0]));
+        }
+
+        return mean;
+    }
 }
