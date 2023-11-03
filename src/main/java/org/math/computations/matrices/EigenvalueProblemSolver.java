@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import org.math.computations.functions.Function;
 
 /**
  * Class that provides different methods for solving partial and full eigenvalue problem
@@ -20,8 +19,11 @@ public class EigenvalueProblemSolver {
         double[][] dataX = Utils.getIdentityMatrix(matrixSize[1]).toArray();
         double[][] prevA = matrixA.toArray();
 
-        double maxUpperElement = Double.MAX_VALUE;
-        while (maxUpperElement > precision ) {
+        double maxUpperElement = 0;
+
+        int iterationCounter = 0;
+        while (maxUpperElement >= precision || iterationCounter == 0) {
+            iterationCounter++;
 
             maxUpperElement = 0;
             int[] indices = new int[2];
@@ -67,7 +69,9 @@ public class EigenvalueProblemSolver {
                 dataX[i][indices[1]] = cos * xj - sin * xi;
             }
 
-            prevA = dataA.clone();
+            for (int i = 0; i < matrixSize[0]; i++) {
+                prevA[i] = Arrays.copyOf(dataA[i], matrixSize[0]);
+            }
         }
 
         double[][] eigenvaluesData = new double[matrixSize[0]][1];
@@ -81,7 +85,7 @@ public class EigenvalueProblemSolver {
         for (int i = 0; i < matrixSize[1]; i++) {
             double[][] vector = new double[matrixSize[0]][1];
             for (int j = 0; j < matrixSize[0]; j++) {
-                vector[j][0] = eigenvectorsMatrix.getElement(j, i);
+                vector[j][0] = eigenvectorsMatrix.getElement(i, j);
             }
             eigenvectors.add(new DenseMatrix(matrixSize[0], 1, vector));
         }
