@@ -11,4 +11,19 @@ public class Utils {
 
         return new DenseMatrix(size, size, matrixData);
     }
+
+    public static double euclideanMean(Matrix matrix) {
+
+        int[] matrixSize = matrix.getSize();
+        double mean = 0;
+
+        for (int i = 0; i < matrixSize[0]; i++) {
+            for (int j = 0; j < matrixSize[1]; j++) {
+                mean += Math.pow(matrix.getElement(j, i), 2);
+            }
+        }
+        mean = Math.sqrt(mean);
+
+        return mean;
+    }
 }
