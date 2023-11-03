@@ -295,6 +295,12 @@ public class SparseMatrix implements Matrix {
   }
 
   @Override
+  public Matrix copy() {
+    return new SparseMatrix(this.rowCount, this.colCount,
+        (HashMap<Integer, HashMap<Integer, Double>>) this.data.clone());
+  }
+
+  @Override
   public int hashCode() {
 
     String caller = String.valueOf((new Throwable().getStackTrace())[1]);

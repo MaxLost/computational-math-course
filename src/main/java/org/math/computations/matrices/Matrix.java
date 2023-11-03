@@ -35,4 +35,6 @@ public interface Matrix {
   Matrix scalarMultiply(double n);
 
   double[][] toArray();
+
+  Matrix copy();
 }

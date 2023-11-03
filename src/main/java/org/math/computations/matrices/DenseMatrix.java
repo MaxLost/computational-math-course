@@ -329,11 +329,12 @@ public class DenseMatrix implements Matrix {
 
   @Override
   public double[][] toArray() {
-    double[][] result = new double[rowCount][colCount];
-    for (int i = 0; i < rowCount; i++) {
-      result[i] = data[i].clone();
-    }
-    return result;
+    return this.data.clone();
+  }
+
+  @Override
+  public Matrix copy() {
+    return new DenseMatrix(this.rowCount, this.colCount, this.data.clone());
   }
 
   @Override
