@@ -3,6 +3,7 @@ package org.math.computations.matrices;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -97,31 +98,59 @@ public class EigenvalueProblemSolver {
     public static List<Matrix> getLargestEigenvalueAndEigenvector(Matrix matrixA, double precision) {
 
         int[] matrixSize = matrixA.getSize();
-        double[][] dataY = new double[matrixSize[0]][1];
-        Random random = new Random();
-
-        for (int i = 0; i < matrixSize[0]; i++) {
-            dataY[i][0] = random.nextDouble();
-        }
-        Matrix vectorY = new DenseMatrix(matrixSize[0], 1, dataY);
+        Matrix vectorY = generateRandomVector(matrixSize[0]);
 
         double postEstimation = Double.MAX_VALUE;
         double eigenvalue = 0;
+        int iterationCounter = 0;
+
         while (postEstimation > precision) {
+            iterationCounter++;
 
             vectorY = normalizeVector(vectorY);
             vectorY = matrixA.mul(vectorY);
-            eigenvalue = getMaxAbsElementOfVector(vectorY);
 
+            eigenvalue = getMaxAbsElementOfVector(vectorY);
             postEstimation = Utils.euclideanMean(
                 matrixA.mul(vectorY).add(vectorY.scalarMultiply(-1 * eigenvalue)))
                 / Utils.euclideanMean(vectorY);
         }
 
+        System.out.printf(Locale.US, "Iterations: %d %nError post estimation = %.6e %n%n",
+            iterationCounter, postEstimation);
+
         double[][] data = new double[1][1];
         data[0][0] = eigenvalue;
 
         return List.of(new DenseMatrix(1, 1, data), normalizeEuclidean(vectorY));
+    }
+
+    public static double getLargestEigenvalueScalarMultiplication(Matrix matrixA, double precision) {
+
+        int[] matrixSize = matrixA.getSize();
+        Matrix vectorY = generateRandomVector(matrixSize[0]);
+
+        double postEstimation = Double.MAX_VALUE;
+        double eigenvalue = 0;
+        int iterationCounter = 0;
+
+        while(postEstimation > precision) {
+            iterationCounter++;
+
+            vectorY = normalizeVector(vectorY);
+            Matrix prevY = vectorY.copy();
+            vectorY = matrixA.mul(vectorY);
+
+            eigenvalue = vectorDotProduct(vectorY, prevY) / vectorDotProduct(prevY, prevY);
+            postEstimation = Utils.euclideanMean(
+                matrixA.mul(vectorY).add(vectorY.scalarMultiply(-1 * eigenvalue)))
+                / Utils.euclideanMean(vectorY);
+        }
+
+        System.out.printf(Locale.US, "Iterations: %d %nError post estimation = %.6e %n%n",
+            iterationCounter, postEstimation);
+
+        return eigenvalue;
     }
 
     private static Matrix normalizeEuclidean(Matrix matrixA) {
@@ -148,6 +177,33 @@ public class EigenvalueProblemSolver {
         }
 
         return vector.getElement(0, maxElementId);
+    }
+
+    private static Matrix generateRandomVector(int size) {
+
+        double[][] dataY = new double[size][1];
+        Random random = new Random();
+
+        for (int i = 0; i < size; i++) {
+            dataY[i][0] = random.nextDouble();
+        }
+
+        return new DenseMatrix(size, 1, dataY);
+    }
+
+    private static double vectorDotProduct(Matrix vectorA, Matrix vectorB) {
+
+        int vectorSize = vectorA.getSize()[0];
+        if (vectorSize != vectorB.getSize()[0]) {
+            throw new RuntimeException("Vectors should have same size.");
+        }
+
+        double result = 0;
+        for (int i = 0; i < vectorSize; i++) {
+            result += vectorA.getElement(0, i) * vectorB.getElement(0, i);
+        }
+
+        return result;
     }
 
 }
