@@ -153,6 +153,17 @@ public class EigenvalueProblemSolver {
         return eigenvalue;
     }
 
+    public static List<Matrix> getOppositeSpectreBound(Matrix matrixA, double bound, double precision) {
+
+        Matrix matrixB = matrixA.add(
+            Utils.getIdentityMatrix(matrixA.getSize()[0]).scalarMultiply(-1 * bound));
+
+        List<Matrix> result = getLargestEigenvalueAndEigenvector(matrixB, precision);
+        double[][] eigenvalue = result.get(0).toArray();
+        eigenvalue[0][0] += bound;
+        return List.of(new DenseMatrix(1, 1, eigenvalue), result.get(1));
+    }
+
     private static Matrix normalizeEuclidean(Matrix matrixA) {
 
         double mean = Utils.euclideanMean(matrixA);

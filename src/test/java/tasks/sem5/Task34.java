@@ -40,6 +40,18 @@ public class Task34 {
 
         double resultScalar = EigenvalueProblemSolver.getLargestEigenvalueScalarMultiplication(matrixA, 1e-3);
         System.out.printf(Locale.US, "Eigenvalue λ1 = %.6f\n", resultScalar);
+
+        System.out.println("\n--- Finding opposite bound of spectre ---\n");
+
+        List<Matrix> resultOpposite = EigenvalueProblemSolver.getOppositeSpectreBound(matrixA,
+            resultScalar, 1e-3);
+        System.out.printf(Locale.US, "Eigenvalue λ2 = %.6f\nEigenvector:\n",
+            resultOpposite.get(0).getElement(0, 0));
+        System.out.println(resultOpposite.get(1));
+        System.out.println("Eigenvector error:\n");
+        Matrix eigenvectorError = matrixA.mul(resultOpposite.get(1))
+            .add(resultOpposite.get(1).scalarMultiply(-1 * resultOpposite.get(0).getElement(0, 0)));
+        System.out.println(eigenvectorError);
     }
 
 }
