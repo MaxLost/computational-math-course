@@ -164,6 +164,75 @@ public class EigenvalueProblemSolver {
         return List.of(new DenseMatrix(1, 1, eigenvalue), result.get(1));
     }
 
+    public static List<Matrix> getLargestEigenvalueAndEigenvectorWielandt(Matrix matrixA, double precision) {
+
+        int[] matrixSize = matrixA.getSize();
+        Matrix vectorY = generateRandomVector(matrixSize[0]);
+
+        double eigenvalue = 0;
+        double postEstimation = Double.MAX_VALUE;
+        int iterationCounter = 0;
+
+        while (postEstimation > precision) {
+            iterationCounter++;
+
+            Matrix matrixB = matrixA.add(
+                Utils.getIdentityMatrix(matrixSize[0]).scalarMultiply(-1 * eigenvalue));
+            vectorY = normalizeVector(vectorY);
+
+            LinearSystemSolver solver = new LinearSystemSolver(
+                LinearSystemSolver.getAugmentedMatrix(matrixB, vectorY));
+            vectorY = solver.solve("IG");
+
+            eigenvalue = eigenvalue + 1 / getMaxAbsElementOfVector(vectorY);
+
+            postEstimation = Utils.euclideanMean(
+                matrixA.mul(vectorY).add(vectorY.scalarMultiply(-1 * eigenvalue)))
+                / Utils.euclideanMean(vectorY);
+        }
+
+        System.out.printf(Locale.US, "Iterations: %d %nError post estimation = %.6e %n%n",
+            iterationCounter, postEstimation);
+
+        double[][] data = new double[1][1];
+        data[0][0] = eigenvalue;
+
+        return List.of(new DenseMatrix(1, 1, data), normalizeEuclidean(vectorY));
+    }
+
+    public static double getLargestEigenvalueWithAitkenRefinement(Matrix matrixA, double precision) {
+
+        int[] matrixSize = matrixA.getSize();
+        Matrix vectorY = generateRandomVector(matrixSize[0]);
+
+        double postEstimation = Double.MAX_VALUE;
+        double[] eigenvalue = new double[3];
+        int iterationCounter = 0;
+
+        while(postEstimation > precision) {
+            iterationCounter++;
+
+            vectorY = normalizeVector(vectorY);
+            Matrix prevY = vectorY.copy();
+            vectorY = matrixA.mul(vectorY);
+
+            eigenvalue[2] = eigenvalue[1];
+            eigenvalue[1] = eigenvalue[0];
+
+            eigenvalue[0] = vectorDotProduct(vectorY, prevY) / vectorDotProduct(prevY, prevY);
+
+            postEstimation = Utils.euclideanMean(
+                matrixA.mul(vectorY).add(vectorY.scalarMultiply(-1 * eigenvalue[0])))
+                / Utils.euclideanMean(vectorY);
+        }
+
+        System.out.printf(Locale.US, "Iterations: %d %nError post estimation = %.6e %n%n",
+            iterationCounter, postEstimation);
+
+        return (eigenvalue[0] * eigenvalue[2] - Math.pow(eigenvalue[1], 2)) / (
+            eigenvalue[0] - 2 * eigenvalue[1] + eigenvalue[2]);
+    }
+
     private static Matrix normalizeEuclidean(Matrix matrixA) {
 
         double mean = Utils.euclideanMean(matrixA);
