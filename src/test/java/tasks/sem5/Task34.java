@@ -76,7 +76,7 @@ public class Task34 {
             matrixA, 1e-3);
         System.out.printf(Locale.US, "Eigenvalue λ1 = %.12f\nEigenvalue error = %.5e\nEigenvector:\n",
             resultWielandt.get(0).getElement(0, 0),
-            Math.abs(eigenvalues[2]) - Math.abs(resultWielandt.get(0).getElement(0, 0)));
+            Math.abs(eigenvalues[0]) - Math.abs(resultWielandt.get(0).getElement(0, 0)));
         System.out.println(resultWielandt.get(1));
 
         System.out.println("\n--- Aitken's refinement method ---\n");

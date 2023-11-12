@@ -167,9 +167,10 @@ public class EigenvalueProblemSolver {
     public static List<Matrix> getLargestEigenvalueAndEigenvectorWielandt(Matrix matrixA, double precision) {
 
         int[] matrixSize = matrixA.getSize();
-        Matrix vectorY = generateRandomVector(matrixSize[0]);
 
-        double eigenvalue = 0;
+        List<Matrix> firstEstimation = getLargestEigenvalueAndEigenvector(matrixA, 1e-3);
+        double eigenvalue = firstEstimation.get(0).getElement(0, 0);
+        Matrix vectorY = firstEstimation.get(1);
         double postEstimation = Double.MAX_VALUE;
         int iterationCounter = 0;
 
