@@ -6,9 +6,7 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import org.math.computations.matrices.DenseMatrix;
 import org.math.computations.matrices.EigenvalueProblemSolver;
-import org.math.computations.matrices.LinearSystemSolver;
 import org.math.computations.matrices.Matrix;
-import org.math.computations.matrices.Utils;
 
 public class Task34 {
 
