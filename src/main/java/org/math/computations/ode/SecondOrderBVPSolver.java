@@ -92,37 +92,44 @@ public class SecondOrderBVPSolver {
 
     private List<PlanePoint> solveBvpSecondApproximation(List<PlanePoint> mesh) {
 
-        double step = mesh.get(1).getX() - mesh.get(0).getY();
-        mesh = generateMesh(mesh.get(0).getX() - step,
-            mesh.get(mesh.size() - 1).getX() + step, mesh.size() + 1);
+        double step = mesh.get(1).getX() - mesh.get(0).getX();
+        List<PlanePoint> tempMesh = generateMesh(mesh.get(0).getX() - step / 2,
+            mesh.get(mesh.size() - 1).getX() + step / 2, mesh.size() + 1);
 
-        double[][] coefficients = new double[mesh.size() + 1][4];
+        double[][] coefficients = new double[tempMesh.size() + 1][4];
+        step = tempMesh.get(1).getX() - tempMesh.get(0).getX();
 
         coefficients[0][0] = 0;
-        coefficients[0][1] = step * boundaryConstraints[0] + 2*boundaryConstraints[1];
-        coefficients[0][2] = 2*boundaryConstraints[1] - step*boundaryConstraints[0];
+        coefficients[0][1] = step * boundaryConstraints[0] + 2 * boundaryConstraints[1];
+        coefficients[0][2] = 2 * boundaryConstraints[1] - step * boundaryConstraints[0];
         coefficients[0][3] = -2 * step * boundaryConstraints[2];
 
-        coefficients[mesh.size()][0] = 2*boundaryConstraints[4] - step * boundaryConstraints[3];
-        coefficients[mesh.size()][1] = step * boundaryConstraints[3] + 2*boundaryConstraints[4];
-        coefficients[mesh.size()][2] = 0;
-        coefficients[mesh.size()][3] = -2 * step * boundaryConstraints[5];
+        coefficients[tempMesh.size()][0] = 2 * boundaryConstraints[4] - step * boundaryConstraints[3];
+        coefficients[tempMesh.size()][1] = step * boundaryConstraints[3] + 2 * boundaryConstraints[4];
+        coefficients[tempMesh.size()][2] = 0;
+        coefficients[tempMesh.size()][3] = -2 * step * boundaryConstraints[5];
 
-        for (int i = 1; i < mesh.size(); i++) {
-            double x = mesh.get(i).getX();
+        for (int i = 1; i < tempMesh.size(); i++) {
+            double x = tempMesh.get(i).getX();
             coefficients[i][0] = -1 * p.evaluate(x - step / 2) - q.evaluate(x) * step / 2;
             coefficients[i][2] = -1 * p.evaluate(x + step / 2) + q.evaluate(x) * step / 2;
             coefficients[i][1] = coefficients[i][0] + coefficients[i][2] - Math.pow(step, 2) * r.evaluate(x);
             coefficients[i][3] = Math.pow(step, 2) * f.evaluate(x);
         }
 
-        return recurrentRun(mesh, coefficients);
+        List<PlanePoint> tempResult = recurrentRun(tempMesh, coefficients);
+        List<PlanePoint> result = new ArrayList<>();
+        for (int i = 0; i < mesh.size(); i++) {
+            result.add(new PlanePoint(mesh.get(i).getX(), (tempResult.get(i).getY() + tempResult.get(i + 1).getY()) / 2));
+        }
+        return result;
     }
 
     private List<PlanePoint> solveBvpRichardsonFirstApproximation(List<PlanePoint> mesh) {
 
+        double step = mesh.get(1).getX() - mesh.get(0).getX();
         double start = mesh.get(0).getX();
-        double end = mesh.get(mesh.size() - 1).getX();
+        double end = start + mesh.size() * step;
 
         List<PlanePoint> y = solveBvpFirstApproximation(mesh);
         List<PlanePoint> y2 = solveBvpFirstApproximation(generateMesh(start, end, mesh.size() * 2));
@@ -134,7 +141,7 @@ public class SecondOrderBVPSolver {
         }
 
         List<PlanePoint> result = new ArrayList<>();
-        for (int i = 0; i < mesh.size(); i++) {
+        for (int i = 0; i < mesh.size() - 1; i++) {
             result.add(new PlanePoint(mesh.get(i).getX(), y2.get(i * 2).getY() + errors[i]));
         }
 
@@ -143,8 +150,9 @@ public class SecondOrderBVPSolver {
 
     private List<PlanePoint> solveBvpRichardsonSecondApproximation(List<PlanePoint> mesh) {
 
+        double step = mesh.get(1).getX() - mesh.get(0).getX();
         double start = mesh.get(0).getX();
-        double end = mesh.get(mesh.size() - 1).getX();
+        double end = start + mesh.size() * step;
 
         List<PlanePoint> y = solveBvpSecondApproximation(mesh);
         List<PlanePoint> y2 = solveBvpSecondApproximation(generateMesh(start, end, mesh.size() * 2));
@@ -177,11 +185,11 @@ public class SecondOrderBVPSolver {
                 / (coefficients[i][1] - coefficients[i][0] * s[i-1]);
         }
 
-        PlanePoint y = new PlanePoint(mesh.get(mesh.size() - 1).getX(), t[mesh.size() - 1]);
+        PlanePoint y = new PlanePoint(mesh.get(mesh.size() - 1).getX(), t[mesh.size()]);
         mesh.set(mesh.size() - 1, y);
 
         for (int i = mesh.size() - 2; i >= 0; i--) {
-            y = new PlanePoint(mesh.get(i).getX(),s[i] * mesh.get(i + 1).getY() + t[i]);
+            y = new PlanePoint(mesh.get(i).getX(),s[i + 1] * mesh.get(i + 1).getY() + t[i + 1]);
             mesh.set(i, y);
         }
 
@@ -195,9 +203,10 @@ public class SecondOrderBVPSolver {
         double pointer = start;
         double step = (end - start) / cellAmount;
 
-        while (pointer < end && Math.abs(end - pointer) > 1e-6) {
-            mesh.add(new PlanePoint(pointer, 0));
+        mesh.add(new PlanePoint(pointer, 0));
+        for (int i = 0; i < cellAmount; i++) {
             pointer += step;
+            mesh.add(new PlanePoint(pointer, 0));
         }
 
         return mesh;
