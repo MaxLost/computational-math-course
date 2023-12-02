@@ -94,10 +94,9 @@ public class SecondOrderBVPSolver {
 
         double step = mesh.get(1).getX() - mesh.get(0).getX();
         List<PlanePoint> tempMesh = generateMesh(mesh.get(0).getX() - step / 2,
-            mesh.get(mesh.size() - 1).getX() + step / 2, mesh.size() + 1);
+            mesh.get(mesh.size() - 1).getX() + step / 2, step);
 
         double[][] coefficients = new double[tempMesh.size() + 1][4];
-        step = tempMesh.get(1).getX() - tempMesh.get(0).getX();
 
         coefficients[0][0] = 0;
         coefficients[0][1] = step * boundaryConstraints[0] + 2 * boundaryConstraints[1];
@@ -129,10 +128,10 @@ public class SecondOrderBVPSolver {
 
         double step = mesh.get(1).getX() - mesh.get(0).getX();
         double start = mesh.get(0).getX();
-        double end = start + mesh.size() * step;
+        double end = mesh.get(mesh.size() - 1).getX();
 
         List<PlanePoint> y = solveBvpFirstApproximation(mesh);
-        List<PlanePoint> y2 = solveBvpFirstApproximation(generateMesh(start, end, mesh.size() * 2));
+        List<PlanePoint> y2 = solveBvpFirstApproximation(generateMesh(start, end, step / 2));
 
         double[] errors = new double[mesh.size()];
 
@@ -141,7 +140,7 @@ public class SecondOrderBVPSolver {
         }
 
         List<PlanePoint> result = new ArrayList<>();
-        for (int i = 0; i < mesh.size() - 1; i++) {
+        for (int i = 0; i < mesh.size(); i++) {
             result.add(new PlanePoint(mesh.get(i).getX(), y2.get(i * 2).getY() + errors[i]));
         }
 
@@ -152,10 +151,10 @@ public class SecondOrderBVPSolver {
 
         double step = mesh.get(1).getX() - mesh.get(0).getX();
         double start = mesh.get(0).getX();
-        double end = start + mesh.size() * step;
+        double end = mesh.get(mesh.size() - 1).getX();
 
         List<PlanePoint> y = solveBvpSecondApproximation(mesh);
-        List<PlanePoint> y2 = solveBvpSecondApproximation(generateMesh(start, end, mesh.size() * 2));
+        List<PlanePoint> y2 = solveBvpSecondApproximation(generateMesh(start, end, step / 2));
 
         double[] errors = new double[mesh.size()];
 
@@ -204,7 +203,22 @@ public class SecondOrderBVPSolver {
         double step = (end - start) / cellAmount;
 
         mesh.add(new PlanePoint(pointer, 0));
-        for (int i = 0; i < cellAmount; i++) {
+        while (Math.abs(end - pointer) > 1e-6) {
+            pointer += step;
+            mesh.add(new PlanePoint(pointer, 0));
+        }
+
+        return mesh;
+    }
+
+    private static List<PlanePoint> generateMesh(double start, double end, double step) {
+
+        List<PlanePoint> mesh = new ArrayList<>();
+
+        double pointer = start;
+
+        mesh.add(new PlanePoint(pointer, 0));
+        while (Math.abs(end - pointer) > 1e-6) {
             pointer += step;
             mesh.add(new PlanePoint(pointer, 0));
         }
