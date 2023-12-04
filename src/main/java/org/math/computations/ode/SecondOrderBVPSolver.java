@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.math.computations.PlanePoint;
 import org.math.computations.functions.Function;
-import org.math.computations.matrices.Matrix;
 
 public class SecondOrderBVPSolver {
 
@@ -139,12 +138,7 @@ public class SecondOrderBVPSolver {
             errors[i] = y2.get(i * 2).getY() - y.get(i).getY();
         }
 
-        List<PlanePoint> result = new ArrayList<>();
-        for (int i = 0; i < mesh.size(); i++) {
-            result.add(new PlanePoint(mesh.get(i).getX(), y2.get(i * 2).getY() + errors[i]));
-        }
-
-        return result;
+        return calculateRichardsonExtrapolation(mesh, y2, errors);
     }
 
     private List<PlanePoint> solveBvpRichardsonSecondApproximation(List<PlanePoint> mesh) {
@@ -161,6 +155,12 @@ public class SecondOrderBVPSolver {
         for (int i = 0; i < mesh.size(); i++) {
             errors[i] = (y2.get(i * 2).getY() - y.get(i).getY()) / 3;
         }
+
+        return calculateRichardsonExtrapolation(mesh, y2, errors);
+    }
+
+    private List<PlanePoint> calculateRichardsonExtrapolation(List<PlanePoint> mesh,
+        List<PlanePoint> y2, double[] errors) {
 
         List<PlanePoint> result = new ArrayList<>();
         for (int i = 0; i < mesh.size(); i++) {
@@ -188,7 +188,7 @@ public class SecondOrderBVPSolver {
         mesh.set(mesh.size() - 1, y);
 
         for (int i = mesh.size() - 2; i >= 0; i--) {
-            y = new PlanePoint(mesh.get(i).getX(),s[i + 1] * mesh.get(i + 1).getY() + t[i + 1]);
+            y = new PlanePoint(mesh.get(i).getX(),s[i] * mesh.get(i + 1).getY() + t[i]);
             mesh.set(i, y);
         }
 
