@@ -1,10 +1,9 @@
 package org.math.computations.functions;
 
 import org.math.computations.PlanePoint;
-import org.math.computations.Polynomial;
+import org.math.computations.polynomials.Polynomial;
 import org.math.computations.matrices.DenseMatrix;
 import org.math.computations.matrices.LinearSolver;
-import org.math.computations.matrices.LinearSystemSolver;
 
 import java.util.ArrayList;
 import java.util.List;

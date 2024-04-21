@@ -1,7 +1,7 @@
 package tasks.sem4;
 
 import org.math.computations.PlanePoint;
-import org.math.computations.Polynomial;
+import org.math.computations.polynomials.Polynomial;
 import org.math.computations.functions.AlgebraicInterpolator;
 import org.math.computations.functions.Function;
 import org.math.computations.functions.FunctionRootFinder;

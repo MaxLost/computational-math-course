@@ -1,6 +1,6 @@
 import org.junit.Test;
 import org.math.computations.PlanePoint;
-import org.math.computations.Polynomial;
+import org.math.computations.polynomials.Polynomial;
 import org.math.computations.functions.AlgebraicInterpolator;
 import org.math.computations.functions.Function;
 

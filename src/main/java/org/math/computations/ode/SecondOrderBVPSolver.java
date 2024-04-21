@@ -3,7 +3,12 @@ package org.math.computations.ode;
 import java.util.ArrayList;
 import java.util.List;
 import org.math.computations.PlanePoint;
+import org.math.computations.polynomials.Polynomial;
 import org.math.computations.functions.Function;
+import org.math.computations.matrices.DenseMatrix;
+import org.math.computations.matrices.LinearSystemSolver;
+import org.math.computations.matrices.Matrix;
+import org.math.computations.polynomials.JacobiPolynomialGenerator;
 
 public class SecondOrderBVPSolver {
 
@@ -42,7 +47,7 @@ public class SecondOrderBVPSolver {
 
      */
 
-    public List<PlanePoint> solveBVP(double start, double end, int cellAmount,
+    public List<PlanePoint> solveBvpDiff(double start, double end, int cellAmount,
         int approximationOrder, boolean useRichardsonExtrapolation) {
 
         List<PlanePoint> mesh = generateMesh(start, end, cellAmount);
@@ -63,6 +68,154 @@ public class SecondOrderBVPSolver {
         return mesh;
     }
 
+    // Projective methods
+    public Function solveCollocation(int coordinateFunctionsAmount) {
+
+        int nodesAmount = coordinateFunctionsAmount;
+
+        Polynomial w1 = new Polynomial(List.of((double) -13/3, -2.0, 1.0)); // x^2 - 2x - 13/2
+        Polynomial w2 = new Polynomial(List.of(-2.0, -3.0, 0.0, 1.0)); // x^3 - 3x - 2
+        List<Polynomial> jacobiPolynomials = JacobiPolynomialGenerator.getJacobiPolynomials(2, 2, coordinateFunctionsAmount);
+        List<Polynomial> coordinateSystem = new ArrayList<>(List.of(w1, w2));
+
+        Polynomial factor = new Polynomial(List.of(1.0, 0.0, -1.0));
+        factor = factor.multiply(factor);
+
+        for (int i = 2; i < coordinateFunctionsAmount; i++) {
+            coordinateSystem.add(jacobiPolynomials.get(i - 2).multiply(factor));
+        }
+
+        double[][] A = new double[coordinateFunctionsAmount][coordinateFunctionsAmount];
+        double[][] b = new double[coordinateFunctionsAmount][1];
+
+        List<Double> nodes = new ArrayList<>();
+        for (int i = 0; i < nodesAmount; i++) {
+            nodes.add(Math.cos((2 * (i + 1) - 1) * Math.PI / (2*nodesAmount)));
+        }
+
+        for (int i = 0; i < nodesAmount; i++) {
+            for (int j = 0; j < coordinateFunctionsAmount; j++) {
+                A[i][j] = LWValue(coordinateSystem.get(j), nodes.get(i));
+            }
+            b[i][0] = f.evaluate(nodes.get(i));
+        }
+
+        Matrix matrixA = new DenseMatrix(nodesAmount, coordinateFunctionsAmount, A);
+        Matrix vectorB = new DenseMatrix(nodesAmount, 1, b);
+
+        LinearSystemSolver solver = new LinearSystemSolver(LinearSystemSolver.getAugmentedMatrix(matrixA, vectorB));
+        Matrix c = solver.solve("");
+
+        Polynomial solution = new Polynomial(List.of(0.0));
+
+        for (int i = 0; i < c.getSize()[0]; i++) {
+            solution = solution.sum(coordinateSystem.get(i).scalarMultiply(c.getElement(0, i)));
+        }
+
+        return solution;
+    }
+
+    private double LWValue(Function w, double x) {
+
+        double step = 0.01;
+
+        double du = (w.evaluate(x + step) - w.evaluate(x - step)) / (2*step);
+        double ddu = (w.evaluate(x - step) - 2*w.evaluate(x) + w.evaluate(x + step)) / (step * step);
+
+        return -1 * p.evaluate(x)*ddu + q.evaluate(x)*du + r.evaluate(x)*w.evaluate(x);
+    }
+
+    public Function solveMinSquareMethod(int coordinateFunctionsAmount) {
+
+        Polynomial w1 = new Polynomial(List.of((double) -13/3, -2.0, 1.0)); // x^2 - 2x - 13/2
+        Polynomial w2 = new Polynomial(List.of(-2.0, -3.0, 0.0, 1.0)); // x^3 - 3x - 2
+//        Polynomial w1 = new Polynomial(List.of(1.0, 2.0, 1.0)); // x^2 + 2*x + 1
+//        Polynomial w2 = new Polynomial(List.of(-2.0, -3.0, 0.0, 1.0)); // x^3 - 3*x - 2
+
+        List<Polynomial> jacobiPolynomials = JacobiPolynomialGenerator.getJacobiPolynomials(2, 2, coordinateFunctionsAmount);
+        List<Polynomial> coordinateSystem = new ArrayList<>(List.of(w1, w2));
+
+        Polynomial factor = new Polynomial(List.of(1.0, 0.0, -1.0));
+        factor = factor.multiply(factor);
+
+        for (int i = 2; i < coordinateFunctionsAmount; i++) {
+            coordinateSystem.add(jacobiPolynomials.get(i - 2).multiply(factor));
+        }
+
+        int N = coordinateFunctionsAmount;
+
+        double[][] A = new double[N][N];
+        double[][] b = new double[N][1];
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+
+                A[i][j] = dotProductCoordinate(coordinateSystem.get(i), coordinateSystem.get(j));
+            }
+            b[i][0] = dotProductCoordinateAndF(f, coordinateSystem.get(i));
+        }
+
+        Matrix matrixA = new DenseMatrix(N, N, A);
+        Matrix vectorB = new DenseMatrix(N, 1, b);
+
+        LinearSystemSolver solver = new LinearSystemSolver(LinearSystemSolver.getAugmentedMatrix(matrixA, vectorB));
+        Matrix c = solver.solve("IG");
+
+        Polynomial solution = new Polynomial(List.of(0.0));
+
+        for (int i = 0; i < c.getSize()[0]; i++) {
+            solution = solution.sum(coordinateSystem.get(i).scalarMultiply(c.getElement(0, i)));
+        }
+
+        return solution;
+    }
+
+    private double dotProductCoordinate(Function a, Function b) {
+
+        double step = 0.05;
+        List<Double> La = LWValues(a, -1 + step / 2, 1 - step / 2, step);
+        List<Double> Lb = LWValues(b, -1 + step / 2, 1 - step / 2, step);
+
+        double value = 0;
+        for (int i = 0; i < La.size(); i++) {
+            value += La.get(i) * Lb.get(i);
+        }
+
+        return value * step;
+    }
+
+    private double dotProductCoordinateAndF(Function f, Function w) {
+
+        double step = 0.05;
+        List<Double> Lw = LWValues(w, -1 + step / 2, 1 - step / 2, step);
+
+        double value = 0;
+        double x = -1 + step;
+        for (int i = 0; i < Lw.size(); i++) {
+            value += Lw.get(i) * f.evaluate(x + step * i);
+        }
+
+        return value * step;
+    }
+
+    private List<Double> LWValues(Function w, double lowerBound, double upperBound, double step) {
+
+        List<Double> result = new ArrayList<>();
+        double x = lowerBound;
+
+        while(x < upperBound) {
+
+            double du = (w.evaluate(x + step) - w.evaluate(x - step)) / (2*step);
+            double ddu = (w.evaluate(x - step) - 2*w.evaluate(x) + w.evaluate(x + step)) / (step * step);
+
+            result.add(-1 * p.evaluate(x)*ddu + q.evaluate(x)*du + r.evaluate(x)*w.evaluate(x));
+
+            x += step;
+        }
+        return result;
+    }
+
+    // Difference methods
     private List<PlanePoint> solveBvpFirstApproximation(List<PlanePoint> mesh) {
 
         double step = mesh.get(1).getX() - mesh.get(0).getX();

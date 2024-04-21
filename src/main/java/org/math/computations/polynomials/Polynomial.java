@@ -1,4 +1,4 @@
-package org.math.computations;
+package org.math.computations.polynomials;
 
 import org.math.computations.functions.Function;
 
@@ -108,7 +108,7 @@ public class Polynomial implements Function {
 	public String toString() {
 		StringBuilder str = new StringBuilder("");
 		for (int i = this.coefficients.size() - 1; i > 0; i--) {
-			str.append(this.coefficients.get(i)).append("*x^").append(i).append(" + ");
+			str.append(this.coefficients.get(i)).append("*(x**").append(i).append(")+");
 		}
 		str.append(this.coefficients.get(0));
 		return str.toString();
