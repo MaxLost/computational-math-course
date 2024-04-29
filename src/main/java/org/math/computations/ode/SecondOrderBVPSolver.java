@@ -1,5 +1,7 @@
 package org.math.computations.ode;
 
+import static org.math.computations.ode.Utils.generateMesh;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.math.computations.PlanePoint;
@@ -343,37 +345,6 @@ public class SecondOrderBVPSolver {
         for (int i = mesh.size() - 2; i >= 0; i--) {
             y = new PlanePoint(mesh.get(i).getX(),s[i] * mesh.get(i + 1).getY() + t[i]);
             mesh.set(i, y);
-        }
-
-        return mesh;
-    }
-
-    private static List<PlanePoint> generateMesh(double start, double end, int cellAmount) {
-
-        List<PlanePoint> mesh = new ArrayList<>();
-
-        double pointer = start;
-        double step = (end - start) / cellAmount;
-
-        mesh.add(new PlanePoint(pointer, 0));
-        while (Math.abs(end - pointer) > 1e-6) {
-            pointer += step;
-            mesh.add(new PlanePoint(pointer, 0));
-        }
-
-        return mesh;
-    }
-
-    private static List<PlanePoint> generateMesh(double start, double end, double step) {
-
-        List<PlanePoint> mesh = new ArrayList<>();
-
-        double pointer = start;
-
-        mesh.add(new PlanePoint(pointer, 0));
-        while (Math.abs(end - pointer) > 1e-6) {
-            pointer += step;
-            mesh.add(new PlanePoint(pointer, 0));
         }
 
         return mesh;
