@@ -96,8 +96,8 @@ public class LinearSystemSolver {
     }
 
     double postEstimation = meanH * mean(x.add(prevX.scalarMultiply(-1))) / (1 - meanH);
-    System.out.println(
-        "Post estimation for simple iteration method: || x^(7) - x || <= " + postEstimation + "\n");
+    // System.out.println(
+    //    "Post estimation for simple iteration method: || x^(7) - x || <= " + postEstimation + "\n");
 
     return x;
   }
