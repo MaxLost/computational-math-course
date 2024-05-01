@@ -7,6 +7,15 @@
     <groupId>org.math</groupId>
     <artifactId>computations</artifactId>
     <version>1.0</version>
+
+    <repositories>
+        <repository>
+            <id>jzy3d-releases</id>
+            <name>Jzy3d Releases</name>
+            <url>https://maven.jzy3d.org/releases/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -19,11 +28,16 @@
             <artifactId>matplotlib4j</artifactId>
             <version>0.5.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.jzy3d</groupId>
+            <artifactId>jzy3d-emul-gl-awt</artifactId>
+            <version>2.2.0</version>
+        </dependency>
     </dependencies>
 
     <properties>
-        <maven.compiler.source>18</maven.compiler.source>
-        <maven.compiler.target>18</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
