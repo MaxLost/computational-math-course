@@ -32,7 +32,7 @@ public class Task2 {
         double[] boundaryConstraints = new double[] {1, 0, 0, 1, 0, 0};
 
         SturmLiouvilleEigenvaluesFinder solver = new SturmLiouvilleEigenvaluesFinder(p, q, -1, 1, boundaryConstraints);
-        Map<Double, Function> result = solver.find(15, 4);
+        Map<Double, Function> result = solver.find(15, 5);
 
         Plot plt = Plot.create();
 
