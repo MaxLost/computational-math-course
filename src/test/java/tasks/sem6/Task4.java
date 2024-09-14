@@ -35,7 +35,7 @@ public class Task4 {
 
         FunctionalR2 f = (x, t) -> Math.cos(x) + t;
         // FunctionalR2 f = (x, t) -> t;
-        double C = 1.0;
+        double C = 1.01;
         List<Double> mesh = generateMesh(0, 2, 200);
 
         double[] u0 = getInitialApproximation(mesh);
@@ -44,7 +44,7 @@ public class Task4 {
         Range rangeT = new Range(0, 2);
 
         TransferEquationSolver solver = new TransferEquationSolver(f, C, 0, 2, 0, 2);
-        double[][] solution = solver.solveImplicit(u0, 0.01, 0.01);
+        double[][] solution = solver.solveExplicitFull(u0, 0.01, 0.01);
 
         System.out.println("DONE");
 
